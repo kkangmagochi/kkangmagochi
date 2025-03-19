@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>나만의 다마고치</title>
+    <title>깡통 키우기</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <div class="tamagotchi-frame">
             <div class="tamagotchi-header">
-                <h1>나만의 다마고치</h1>
+                <h1 id="title-text">깡통 키우기</h1>
             </div>
             
             <div class="stats-container">
@@ -51,6 +51,7 @@
                         <p id="character-speech">안녕하세요!</p>
                     </div>
                 </div>
+                <div id="night-effect" class="night-effect"></div>
             </div>
             
             <div class="action-buttons">
@@ -98,13 +99,31 @@
                 <div id="current-character-name" class="current-character-info">현재 선택된 캐릭터: <span>없음</span></div>
                 
                 <div class="form-group">
-                    <label for="custom-dialog">맞춤 대화:</label>
-                    <textarea id="custom-dialog" rows="4" placeholder="캐릭터와 나눌 대화를 입력하세요."></textarea>
+                    <label for="custom-dialog">맞춤 대화 목록:</label>
+                    <div class="dialog-list">
+                        <div class="dialog-item">
+                            <input type="text" class="custom-dialog-input" placeholder="캐릭터와 나눌 대화를 입력하세요.">
+                            <button class="add-dialog-btn">+</button>
+                        </div>
+                        <div id="custom-dialogs-container">
+                            <!-- 저장된 대화 항목이 여기에 표시됩니다 -->
+                        </div>
+                    </div>
                 </div>
+                
                 <div class="form-group">
-                    <label for="custom-gift">맞춤 선물:</label>
-                    <input type="text" id="custom-gift" placeholder="캐릭터에게 줄 선물을 입력하세요.">
+                    <label for="custom-gift">맞춤 선물 목록:</label>
+                    <div class="gift-list">
+                        <div class="gift-item">
+                            <input type="text" class="custom-gift-input" placeholder="캐릭터에게 줄 선물을 입력하세요.">
+                            <button class="add-gift-btn">+</button>
+                        </div>
+                        <div id="custom-gifts-container">
+                            <!-- 저장된 선물 항목이 여기에 표시됩니다 -->
+                        </div>
+                    </div>
                 </div>
+                
                 <div class="form-group">
                     <label for="ai-character-name">AI 캐릭터 이름 (옵션):</label>
                     <input type="text" id="ai-character-name" placeholder="AI가 표현할 캐릭터의 이름을 입력하세요.">
@@ -146,8 +165,6 @@
                 </div>
             </div>
         </div>
-        
-        <div id="night-overlay" class="night-overlay"></div>
     </div>
     
     <script src="script.js"></script>
