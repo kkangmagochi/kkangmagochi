@@ -1,8 +1,8 @@
 :root {
-    --primary-color: #ffb6c1;
-    --secondary-color: #b5e8f7;
-    --tertiary-color: #d0f0c0;
-    --accent-color: #fffacd;
+    --primary-color: #f8d7da;
+    --secondary-color: #d8e8f3;
+    --tertiary-color: #e2f0cb;
+    --accent-color: #ffedc9;
     --text-color: #5a5a5a;
     --border-color: #c9d8e6;
     --button-hover: #ffcad4;
@@ -21,10 +21,6 @@
 
 body {
     background-color: #f5f8fa;
-    background-image: radial-gradient(var(--accent-color) 3px, transparent 3px), 
-                      radial-gradient(var(--primary-color) 2px, transparent 2px);
-    background-size: 30px 30px;
-    background-position: 0 0, 15px 15px;
     color: var(--text-color);
     display: flex;
     justify-content: center;
@@ -54,7 +50,6 @@ body {
     overflow: hidden;
     transition: all 0.3s ease;
     border: 8px solid white;
-    border-radius: 30px;
 }
 
 .tamagotchi-header {
@@ -63,11 +58,9 @@ body {
 }
 
 .tamagotchi-header h1 {
-    font-size: 2.5rem;
+    font-size: 2rem;
     color: #4a4a4a;
     text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
-    font-family: 'Gaegu', cursive;
-    letter-spacing: 1px;
 }
 
 .stats-container {
@@ -126,11 +119,6 @@ body {
 
 .character-display {
     background-color: white;
-    background-image: 
-        radial-gradient(var(--tertiary-color) 1px, transparent 1px),
-        radial-gradient(var(--secondary-color) 1px, transparent 1px);
-    background-size: 20px 20px;
-    background-position: 0 0, 10px 10px;
     border-radius: 16px;
     height: 280px;
     display: flex;
@@ -157,7 +145,6 @@ body {
     max-height: 180px;
     object-fit: contain;
     transition: transform 0.3s ease;
-    cursor: pointer;
 }
 
 .speech-bubble {
@@ -169,8 +156,6 @@ body {
     max-width: 80%;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
     z-index: 10;
-    font-family: 'Gaegu', cursive;
-    font-size: 1.1rem;
 }
 
 .speech-bubble:after {
@@ -215,8 +200,6 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    font-family: 'Gaegu', cursive;
-    font-size: 1.2rem;
 }
 
 .action-button:hover {
@@ -401,7 +384,7 @@ body {
 }
 
 .night-overlay {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -410,7 +393,7 @@ body {
     z-index: 50;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 1s ease-in-out;
+    transition: opacity 2s ease-in-out;
 }
 
 /* 반응형 디자인 */
