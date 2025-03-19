@@ -1,8 +1,8 @@
 :root {
-    --primary-color: #f8d7da;
-    --secondary-color: #d8e8f3;
-    --tertiary-color: #e2f0cb;
-    --accent-color: #ffedc9;
+    --primary-color: #ffb6c1;
+    --secondary-color: #b5e8f7;
+    --tertiary-color: #d0f0c0;
+    --accent-color: #fffacd;
     --text-color: #5a5a5a;
     --border-color: #c9d8e6;
     --button-hover: #ffcad4;
@@ -10,19 +10,21 @@
     --progress-affection: #ff9eb5;
     --progress-hunger: #86c1ff;
     --progress-happiness: #a5dbb2;
-    --pixel-border: #a3a3a3;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Noto Sans KR', sans-serif;
 }
 
 body {
     background-color: #f5f8fa;
-    background-image: url('https://i.imgur.com/XwreFfn.png');
-    background-repeat: repeat;
+    background-image: radial-gradient(var(--accent-color) 3px, transparent 3px), 
+                      radial-gradient(var(--primary-color) 2px, transparent 2px);
+    background-size: 30px 30px;
+    background-position: 0 0, 15px 15px;
     color: var(--text-color);
     display: flex;
     justify-content: center;
@@ -30,7 +32,6 @@ body {
     min-height: 100vh;
     padding: 20px;
     transition: background-color 0.3s ease;
-    font-family: 'Noto Sans KR', sans-serif;
 }
 
 .container {
@@ -43,36 +44,30 @@ body {
 }
 
 .tamagotchi-frame {
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 
-        0 0 0 4px #b3b3b3,
-        0 0 0 8px #ffffff,
-        0 10px 25px rgba(0, 0, 0, 0.2);
-    padding: 20px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 24px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 30px;
     width: 100%;
     max-width: 600px;
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
-    image-rendering: pixelated;
-    border: 2px solid var(--pixel-border);
+    border: 8px solid white;
+    border-radius: 30px;
 }
 
 .tamagotchi-header {
     text-align: center;
     margin-bottom: 20px;
-    border-bottom: 3px dashed var(--primary-color);
-    padding-bottom: 10px;
 }
 
 .tamagotchi-header h1 {
-    font-size: 2rem;
+    font-size: 2.5rem;
     color: #4a4a4a;
-    font-family: 'Press Start 2P', cursive;
-    text-shadow: 2px 2px 0px #ffa7b6;
-    letter-spacing: -1px;
-    transform: rotate(-2deg);
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+    font-family: 'Gaegu', cursive;
+    letter-spacing: 1px;
 }
 
 .stats-container {
@@ -80,13 +75,10 @@ body {
     flex-direction: column;
     gap: 12px;
     margin-bottom: 20px;
-    background-color: #fffffa;
+    background-color: rgba(255, 255, 255, 0.7);
     padding: 15px;
-    border-radius: 8px;
-    box-shadow: 
-        0 0 0 2px #e8e8e8,
-        inset 0 0 20px rgba(0, 0, 0, 0.05);
-    border: 2px solid var(--pixel-border);
+    border-radius: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
 .stat {
@@ -98,8 +90,6 @@ body {
 .stat span {
     min-width: 60px;
     font-weight: 500;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.65rem;
 }
 
 .stat span:last-child {
@@ -112,9 +102,8 @@ body {
     flex: 1;
     background-color: var(--progress-bar-bg);
     height: 12px;
-    border-radius: 0;
+    border-radius: 6px;
     overflow: hidden;
-    border: 2px solid #d1d1d1;
 }
 
 .progress {
@@ -125,29 +114,24 @@ body {
 
 #affection-bar {
     background-color: var(--progress-affection);
-    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
-    background-size: 10px 10px;
 }
 
 #hunger-bar {
     background-color: var(--progress-hunger);
-    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
-    background-size: 10px 10px;
 }
 
 #happiness-bar {
     background-color: var(--progress-happiness);
-    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
-    background-size: 10px 10px;
 }
 
 .character-display {
-    background-color: #f0f8ff;
+    background-color: white;
     background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.8) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.8) 1px, transparent 1px);
+        radial-gradient(var(--tertiary-color) 1px, transparent 1px),
+        radial-gradient(var(--secondary-color) 1px, transparent 1px);
     background-size: 20px 20px;
-    border-radius: 8px;
+    background-position: 0 0, 10px 10px;
+    border-radius: 16px;
     height: 280px;
     display: flex;
     justify-content: center;
@@ -155,10 +139,7 @@ body {
     margin-bottom: 20px;
     position: relative;
     overflow: hidden;
-    box-shadow: 
-        0 0 0 4px #e0e0e0,
-        inset 0 0 30px rgba(0, 0, 0, 0.1);
-    border: 2px solid var(--pixel-border);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 #character-container {
@@ -169,7 +150,6 @@ body {
     width: 100%;
     height: 100%;
     position: relative;
-    z-index: 1;
 }
 
 #character-image {
@@ -178,23 +158,19 @@ body {
     object-fit: contain;
     transition: transform 0.3s ease;
     cursor: pointer;
-    image-rendering: pixelated;
-    filter: drop-shadow(3px 3px 0 rgba(0, 0, 0, 0.2));
 }
 
 .speech-bubble {
     position: absolute;
     top: 30px;
     background-color: var(--accent-color);
-    border-radius: 12px;
+    border-radius: 20px;
     padding: 12px 15px;
     max-width: 80%;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
     z-index: 10;
-    border: 2px solid #e0d0a0;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.65rem;
-    line-height: 1.5;
+    font-family: 'Gaegu', cursive;
+    font-size: 1.1rem;
 }
 
 .speech-bubble:after {
@@ -205,64 +181,51 @@ body {
     transform: translateX(-50%);
     border-width: 10px 10px 0;
     border-style: solid;
-    border-color: #e0d0a0 transparent;
+    border-color: var(--accent-color) transparent;
 }
 
 .no-character-message {
     text-align: center;
     padding: 20px;
     background-color: rgba(248, 215, 218, 0.3);
-    border-radius: 8px;
+    border-radius: 12px;
     max-width: 80%;
-    border: 2px dashed #ffcad4;
 }
 
 .no-character-message p {
     margin-bottom: 10px;
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: #6c757d;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.6rem;
-    line-height: 1.5;
 }
 
 .action-buttons {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 15px;
 }
 
 .action-button {
     padding: 14px 10px;
-    background-color: #fffffa;
+    background-color: white;
     border: none;
-    border-radius: 0;
-    font-size: 0.8rem;
-    font-weight: 700;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 500;
     color: var(--text-color);
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 
-        0 4px 0 #c5c5c5,
-        0 0 0 2px #d1d1d1;
-    font-family: 'Press Start 2P', cursive;
-    transform: translate(-2px, -2px);
-    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    font-family: 'Gaegu', cursive;
+    font-size: 1.2rem;
 }
 
 .action-button:hover {
     background-color: var(--button-hover);
-    transform: translate(-1px, -1px);
-    box-shadow: 
-        0 2px 0 #c5c5c5,
-        0 0 0 2px #d1d1d1;
+    transform: translateY(-2px);
 }
 
 .action-button:active {
-    transform: translate(0, 0);
-    box-shadow: 
-        0 0 0 #c5c5c5,
-        0 0 0 2px #d1d1d1;
+    transform: translateY(0);
 }
 
 .side-controls {
@@ -274,35 +237,21 @@ body {
 
 .control-button {
     padding: 15px;
-    background-color: #fffffa;
+    background-color: white;
     border: none;
-    border-radius: 0;
-    font-size: 0.7rem;
-    font-weight: 700;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
     color: var(--text-color);
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 
-        0 4px 0 #c5c5c5,
-        0 0 0 2px #d1d1d1;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
     min-width: 120px;
-    font-family: 'Press Start 2P', cursive;
-    transform: translate(-2px, -2px);
 }
 
 .control-button:hover {
     background-color: var(--accent-color);
-    transform: translate(-1px, -1px);
-    box-shadow: 
-        0 2px 0 #c5c5c5,
-        0 0 0 2px #d1d1d1;
-}
-
-.control-button:active {
-    transform: translate(0, 0);
-    box-shadow: 
-        0 0 0 #c5c5c5,
-        0 0 0 2px #d1d1d1;
+    transform: translateY(-2px);
 }
 
 /* 모달 스타일 */
@@ -319,18 +268,14 @@ body {
 }
 
 .modal-content {
-    background: #fffffa;
+    background: linear-gradient(135deg, #fff9f9, #f0f8ff);
     margin: 10% auto;
     padding: 25px;
-    border-radius: 0;
+    border-radius: 16px;
     max-width: 500px;
     width: 90%;
-    box-shadow: 
-        0 0 0 4px #b3b3b3,
-        0 10px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
     position: relative;
-    border: 2px solid var(--pixel-border);
-    font-family: 'Noto Sans KR', sans-serif;
 }
 
 .close {
@@ -340,7 +285,6 @@ body {
     font-size: 1.5rem;
     cursor: pointer;
     color: #aaa;
-    font-family: monospace;
 }
 
 .close:hover {
@@ -354,96 +298,69 @@ body {
 .form-group label {
     display: block;
     margin-bottom: 8px;
-    font-weight: 700;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.65rem;
-    color: #444;
+    font-weight: 500;
 }
 
 .form-group input,
 .form-group textarea {
     width: 100%;
     padding: 12px;
-    border: 2px solid #d1d1d1;
-    border-radius: 0;
-    font-size: 0.9rem;
-    background-color: #fafafa;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
 }
 
 .modal-button {
     padding: 12px 20px;
     background-color: var(--secondary-color);
     border: none;
-    border-radius: 0;
-    font-size: 0.8rem;
-    font-weight: 700;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
     color: var(--text-color);
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 
-        0 4px 0 #a8c2d8,
-        0 0 0 2px #bed0e0;
-    font-family: 'Press Start 2P', cursive;
-    transform: translate(-2px, -2px);
 }
 
 .modal-button:hover {
     background-color: var(--primary-color);
-    transform: translate(-1px, -1px);
-    box-shadow: 
-        0 2px 0 #a8c2d8,
-        0 0 0 2px #bed0e0;
-}
-
-.modal-button:active {
-    transform: translate(0, 0);
-    box-shadow: 
-        0 0 0 #a8c2d8,
-        0 0 0 2px #bed0e0;
 }
 
 .saved-characters {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 15px;
     margin-top: 15px;
 }
 
 .character-card {
-    background-color: #f8f8f8;
-    border-radius: 0;
+    background-color: white;
+    border-radius: 8px;
     padding: 10px;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 
-        0 2px 0 #d1d1d1,
-        0 0 0 1px #e8e8e8;
-    border: 1px solid var(--pixel-border);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .character-card:hover {
     transform: translateY(-3px);
-    box-shadow: 
-        0 5px 0 #d1d1d1,
-        0 0 0 1px #e8e8e8;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .character-card img {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     object-fit: cover;
-    border-radius: 0;
+    border-radius: 50%;
     margin-bottom: 5px;
-    image-rendering: pixelated;
 }
 
 .character-card p {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-family: 'Press Start 2P', cursive;
 }
 
 .api-response {
@@ -451,79 +368,81 @@ body {
     max-height: 200px;
     overflow-y: auto;
     background-color: #f8f9fa;
-    border-radius: 0;
+    border-radius: 8px;
     padding: 10px;
     margin-top: 5px;
-    border: 2px solid #dee2e6;
-    font-family: monospace;
-    font-size: 0.8rem;
+    border: 1px solid #dee2e6;
 }
 
 .current-character-info {
     background-color: var(--accent-color);
     padding: 10px;
-    border-radius: 0;
+    border-radius: 8px;
     margin-bottom: 20px;
-    font-weight: 700;
-    border: 2px solid #e0d0a0;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.65rem;
-    text-align: center;
+    font-weight: 500;
 }
 
-.dialog-list, .gift-list {
-    background-color: #f8f9fa;
-    border: 2px solid #dee2e6;
-    padding: 10px;
-    border-radius: 0;
-    margin-top: 5px;
+.hide {
+    display: none;
 }
 
-.dialog-item, .gift-item {
+.show {
     display: flex;
-    margin-bottom: 10px;
 }
 
-.custom-dialog-input, .custom-gift-input {
-    flex: 1;
-    padding: 8px;
-    border: 1px solid #d1d1d1;
-    border-radius: 0;
-    font-size: 0.8rem;
+/* 애니메이션 효과 */
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
 
-.add-dialog-btn, .add-gift-btn {
-    background-color: #a5dbb2;
-    border: none;
-    width: 30px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    border-radius: 0;
-    margin-left: 5px;
-    box-shadow: 
-        0 2px 0 #85b992,
-        0 0 0 1px #95c9a2;
+.bounce {
+    animation: bounce 0.5s;
 }
 
-.saved-dialog-item, .saved-gift-item {
-    display: flex;
-    padding: 8px;
-    background-color: #fffffa;
-    margin-bottom: 5px;
-    border: 1px solid #e5e5e5;
+.night-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 20, 0.8);
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease-in-out;
 }
 
-.saved-dialog-text, .saved-gift-text {
-    flex: 1;
-    font-size: 0.8rem;
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .side-controls {
+        flex-direction: row;
+        margin-left: 0;
+        margin-top: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .tamagotchi-frame {
+        max-width: 100%;
+    }
+    
+    .action-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
-.remove-dialog-btn, .remove-gift-btn {
-    background-color: #ffcbd3;
-    border: none;
-    width: 25px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    border-radius: 0;
-    margin-left: 5px;
-    box-shadow
+@media (max-width: 480px) {
+    .tamagotchi-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .action-buttons {
+        grid-template-columns: 1fr;
+    }
+}
