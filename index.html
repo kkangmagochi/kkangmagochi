@@ -183,12 +183,16 @@
                     <input type="text" id="api-key" placeholder="Google Gemini API 키를 입력하세요">
                 </div>
                 <div class="form-group">
-                    <label for="model-select">모델 선택:</label>
-                    <select id="model-select">
-                        <option value="gemini-2.0-flash">Gemini 2.0 Flash (빠르고 효율적)</option>
-                        <option value="gemini-2.0-pro-exp-02-05">Gemini 2.0 Pro (더 강력한 성능)</option>
-                    </select>
-                </div>
+    <label>모델 선택:</label>
+    <div class="radio-group">
+        <input type="radio" id="model-flash" name="model-select" checked>
+        <label for="model-flash">Gemini 2.0 Flash (빠르고 효율적)</label>
+    </div>
+    <div class="radio-group">
+        <input type="radio" id="model-pro" name="model-select">
+        <label for="model-pro">Gemini 2.0 Pro (더 강력한 성능)</label>
+    </div>
+</div>
                 <div class="form-group">
                     <button id="connect-api" class="modal-button">연결하기</button>
                 </div>
