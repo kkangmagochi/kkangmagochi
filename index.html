@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나만의 다마고치</title>
+    <style>
+        :root {
+            --primary: #ff6bcb;
+            --secondary: #5e17eb;
+            --background: #ffeeff;
+            --text: #333;
+            --accent: #17ebbc;
+        }
+        
+        body {
+            background-color: var(--background);
+            font-family: 'Pixelated MS Sans Serif', 'Comic Sans MS', 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        .tamagotchi-container {
+            width: 320px;
+            height: 480px;
+            background-color: var(--primary);
+            border-radius: 30px;
+            border: 8px solid var(--secondary);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tamagotchi-header {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .tamagotchi-screen {
+            width: 280px;
+            height: 280px;
+            background-color: #e8f5ff;
+            border-radius: 15px;
+            border: 5px solid var(--secondary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .character-container {
+            width: 150px;
+            height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        #character {
+            max-width: 100%;
+            max-height: 100%;
+            cursor: pointer;
+            image-rendering: pixelated;
+        }
+        
+        .mood {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+        }
+        
+        .stats {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px;
+            border-radius: 5px;
+            border: 2px solid var(--secondary);
+            font-size: 12px;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 2px 0;
+        }
+        
+        .stat-bar {
+            width: 100px;
+            height: 10px;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-left: 5px;
+            overflow: hidden;
+        }
+        
+        .stat-progress {
+            height: 100%;
+            background-color: var(--accent);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .control-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+        
+        .control-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .speech-bubble {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid var(--text);
+            max-width: 200px;
+            display: none;
+            z-index: 10;
+        }
+        
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: white transparent transparent;
+        }
+        
+        .character-selection {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .settings-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: var(--background);
+            border-radius: 15px;
+            border: 5px solid var(--secondary);
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+        }
+        
+        .modal-title {
+            color: var(--secondary);
+            margin-top: 0;
+        }
+        
+        .modal-close {
+            color: var(--text);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .input-group {
+            margin: 10px 0;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+        
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid var(--secondary);
+            border-radius: 5px;
+        }
+        
+        .btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .pixel-art {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        
+        .dot-pattern {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(var(--secondary) 1px, transparent 1px);
+            background-size: 10px 10px;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="tamagotchi-container">
+        <div class="dot-pattern"></div>
+        <div class="tamagotchi-header">
+            <h2>나만의 다마고치</h2>
+        </div>
+        
+        <div class="tamagotchi-screen">
+            <div class="mood">😊</div>
+            
+            <div class="character-container">
+                <img id="character" src="/api/placeholder/150/150" alt="캐릭터" class="pixel-art">
+            </div>
+            
+            <div class="speech-bubble" id="speechBubble">
+                안녕하세요!
+            </div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <span>호감도:</span>
+                    <div class="stat-bar">
+                        <div class="stat-progress" id="affection" style="width: 50%;"></div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <span>허기:</span>
+                    <div class="stat-bar">
+                        <div class="stat-progress" id="hunger" style="width: 70%;"></div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <span>행복도:</span>
+                    <div class="stat-bar">
+                        <div class="stat-progress" id="happiness" style="width: 60%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn" id="feedBtn" title="밥주기">🍱</button>
+            <button class="control-btn" id="playBtn" title="놀아주기">🎮</button>
+            <button class="control-btn" id="giftBtn" title="선물하기">🎁</button>
+            <button class="control-btn" id="sleepBtn" title="잠자기">😴</button>
+        </div>
+        
+        <div class="character-selection">
+            <button class="settings-btn" id="uploadBtn">캐릭터 업로드</button>
+            <button class="settings-btn" id="settingsBtn">설정</button>
+        </div>
+    </div>
+    
+    <!-- 캐릭터 업로드 모달 -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <span class="modal-close" id="closeUploadModal">&times;</span>
+            <h2 class="modal-title">캐릭터 업로드</h2>
+            <div class="input-group">
+                <label for="characterName">캐릭터 이름:</label>
+                <input type="text" id="characterName" placeholder="캐릭터 이름을 입력하세요">
+            </div>
+            <div class="input-group">
+                <label for="characterImage">캐릭터 이미지:</label>
+                <input type="file" id="characterImage" accept="image/*">
+            </div>
+            <button class="btn" id="saveCharacter">저장하기</button>
+            <hr>
+            <h3>저장된 캐릭터</h3>
+            <div id="savedCharacters">
+                <!-- 저장된 캐릭터 목록이 여기에 표시됩니다 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 설정 모달 -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <span class="modal-close" id="closeSettingsModal">&times;</span>
+            <h2 class="modal-title">설정</h2>
+            <div class="input-group">
+                <label for="customDialogues">맞춤 대화:</label>
+                <textarea id="customDialogues" rows="5" placeholder="각 줄에 하나의 대화를 입력하세요"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="customGifts">맞춤 선물:</label>
+                <textarea id="customGifts" rows="5" placeholder="각 줄에 하나의 선물을 입력하세요 (예: 이모티콘,선물이름)"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="aiCharacter">AI 캐릭터 이름 (옵션):</label>
+                <input type="text" id="aiCharacter" placeholder="유명한 캐릭터 이름을 입력하세요">
+            </div>
+            <button class="btn" id="saveSettings">저장하기</button>
+        </div>
+    </div>
+
+    <script>
+        // 게임 상태를 저장할 객체
+        let gameState = {
+            character: {
+                name: "다마고치",
+                image: null,
+                affection: 50,
+                hunger: 70,
+                happiness: 60,
+                mood: "😊"
+            },
+            characters: [], // 저장된 캐릭터들
+            dialogues: [
+                "안녕하세요!",
+                "오늘 기분이 좋아요!",
+                "배고파요...",
+                "같이 놀아요!",
+                "피곤해요...",
+                "만져주세요!",
+                "행복해요~",
+                "더 많은 관심 주세요!"
+            ],
+            gifts: [
+                "🍎,사과",
+                "🍦,아이스크림",
+                "🍕,피자",
+                "🧸,곰인형",
+                "💐,꽃다발",
+                "🎀,리본"
+            ],
+            customDialogues: [],
+            customGifts: [],
+            aiCharacter: ""
+        };
+        
+        // 요소들 가져오기
+        const character = document.getElementById('character');
+        const speechBubble = document.getElementById('speechBubble');
+        const affectionBar = document.getElementById('affection');
+        const hungerBar = document.getElementById('hunger');
+        const happinessBar = document.getElementById('happiness');
+        const moodElement = document.querySelector('.mood');
+        
+        // 버튼들
+        const feedBtn = document.getElementById('feedBtn');
+        const playBtn = document.getElementById('playBtn');
+        const giftBtn = document.getElementById('giftBtn');
+        const sleepBtn = document.getElementById('sleepBtn');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        
+        // 모달
+        const uploadModal = document.getElementById('uploadModal');
+        const settingsModal = document.getElementById('settingsModal');
+        const closeUploadModal = document.getElementById('closeUploadModal');
+        const closeSettingsModal = document.getElementById('closeSettingsModal');
+        const saveCharacter = document.getElementById('saveCharacter');
+        const saveSettings = document.getElementById('saveSettings');
+        
+        // 캐릭터 관련 입력 필드
+        const characterName = document.getElementById('characterName');
+        const characterImage = document.getElementById('characterImage');
+        const savedCharacters = document.getElementById('savedCharacters');
+        
+        // 설정 관련 입력 필드
+        const customDialogues = document.getElementById('customDialogues');
+        const customGifts = document.getElementById('customGifts');
+        const aiCharacter = document.getElementById('aiCharacter');
+        
+        // 로컬 스토리지에서 게임 상태 불러오기
+        function loadGameState() {
+            const savedState = localStorage.getItem('tamagotchiState');
+            if (savedState) {
+                gameState = JSON.parse(savedState);
+                updateUI();
+                loadCharacterList();
+            }
+        }
+        
+        // 게임 상태 저장하기
+        function saveGameState() {
+            localStorage.setItem('tamagotchiState', JSON.stringify(gameState));
+        }
+        
+        // UI 업데이트
+        function updateUI() {
+            affectionBar.style.width = `${gameState.character.affection}%`;
+            hungerBar.style.width = `${gameState.character.hunger}%`;
+            happinessBar.style.width = `${gameState.character.happiness}%`;
+            moodElement.textContent = gameState.character.mood;
+            
+            if (gameState.character.image) {
+                character.src = gameState.character.image;
+            }
+        }
+        
+        // 대화 표시
+        function showSpeech(text) {
+            speechBubble.textContent = text;
+            speechBubble.style.display = 'block';
+            
+            setTimeout(() => {
+                speechBubble.style.display = 'none';
+            }, 3000);
+        }
+        
+        // 랜덤 대화 가져오기
+        function getRandomSpeech() {
+            const allDialogues = [...gameState.dialogues, ...gameState.customDialogues].filter(d => d.trim() !== '');
+            const randomIndex = Math.floor(Math.random() * allDialogues.length);
+            return allDialogues[randomIndex];
+        }
+        
+        // 랜덤 선물 가져오기
+        function getRandomGift() {
+            const allGifts = [...gameState.gifts, ...gameState.customGifts].filter(g => g.trim() !== '');
+            const randomIndex = Math.floor(Math.random() * allGifts.length);
+            return allGifts[randomIndex].split(',');
+        }
+        
+        // 기분 업데이트
+        function updateMood() {
+            const total = gameState.character.affection + gameState.character.hunger + gameState.character.happiness;
+            const average = total / 3;
+            
+            if (average > 80) {
+                gameState.character.mood = "😍";
+            } else if (average > 60) {
+                gameState.character.mood = "😊";
+            } else if (average > 40) {
+                gameState.character.mood = "😐";
+            } else if (average > 20) {
+                gameState.character.mood = "😢";
+            } else {
+                gameState.character.mood = "😭";
+            }
+            
+            moodElement.textContent = gameState.character.mood;
+        }
+        
+        // 상태 변경
+        function changeStats(affection, hunger, happiness) {
+            gameState.character.affection += affection;
+            gameState.character.hunger += hunger;
+            gameState.character.happiness += happiness;
+            
+            // 값 범위 제한
+            gameState.character.affection = Math.max(0, Math.min(100, gameState.character.affection));
+            gameState.character.hunger = Math.max(0, Math.min(100, gameState.character.hunger));
+            gameState.character.happiness = Math.max(0, Math.min(100, gameState.character.happiness));
+            
+            updateUI();
+            updateMood();
+            saveGameState();
+        }
+        
+        // 캐릭터 목록 로드
+        function loadCharacterList() {
+            savedCharacters.innerHTML = '';
+            
+            gameState.characters.forEach((char, index) => {
+                const charElement = document.createElement('div');
+                charElement.style.display = 'flex';
+                charElement.style.alignItems = 'center';
+                charElement.style.marginBottom = '10px';
+                
+                const charImg = document.createElement('img');
+                charImg.src = char.image;
+                charImg.style.width = '50px';
+                charImg.style.height = '50px';
+                charImg.style.marginRight = '10px';
+                charImg.style.borderRadius = '5px';
+                charImg.classList.add('pixel-art');
+                
+                const charName = document.createElement('span');
+                charName.textContent = char.name;
+                
+                const selectBtn = document.createElement('button');
+                selectBtn.textContent = '선택';
+                selectBtn.style.marginLeft = 'auto';
+                selectBtn.classList.add('btn');
+                selectBtn.style.padding = '3px 8px';
+                
+                selectBtn.onclick = () => {
+                    gameState.character = { ...char };
+                    updateUI();
+                    saveGameState();
+                    uploadModal.style.display = 'none';
+                };
+                
+                charElement.appendChild(charImg);
+                charElement.appendChild(charName);
+                charElement.appendChild(selectBtn);
+                savedCharacters.appendChild(charElement);
+            });
+        }
+        
+        // 이벤트 리스너
+        
+        // 캐릭터 클릭 - 호감도 증가
+        character.addEventListener('click', () => {
+            changeStats(5, 0, 3);
+            showSpeech(getRandomSpeech());
+        });
+        
+        // 먹이 주기
+        feedBtn.addEventListener('click', () => {
+            changeStats(2, 15, 5);
+            showSpeech("맛있어요! 고마워요!");
+        });
+        
+        // 놀아주기
+        playBtn.addEventListener('click', () => {
+            changeStats(5, -5, 10);
+            showSpeech("재미있어요! 더 놀아요!");
+        });
+        
+        // 선물하기
+        giftBtn.addEventListener('click', () => {
+            const [emoji, giftName] = getRandomGift();
+            changeStats(10, 0, 8);
+            showSpeech(`${emoji} ${giftName}! 정말 고마워요!`);
+        });
+        
+        // 잠자기
+        sleepBtn.addEventListener('click', () => {
+            // 상태를 랜덤으로 조정
+            const affectionChange = Math.floor(Math.random() * 20) - 5;
+            const hungerChange = Math.floor(Math.random() * 20) - 10;
+            const happinessChange = Math.floor(Math.random() * 20) - 5;
+            
+            changeStats(affectionChange, hungerChange, happinessChange);
+            showSpeech("잘 잤어요! 기분이 달라졌어요!");
+        });
+        
+        // 캐릭터 업로드 모달 열기
+        uploadBtn.addEventListener('click', () => {
+            uploadModal.style.display = 'flex';
+        });
+        
+        // 설정 모달 열기
+        settingsBtn.addEventListener('click', () => {
+            customDialogues.value = gameState.customDialogues.join('\n');
+            customGifts.value = gameState.customGifts.join('\n');
+            aiCharacter.value = gameState.aiCharacter;
+            settingsModal.style.display = 'flex';
+        });
+        
+        // 모달 닫기
+        closeUploadModal.addEventListener('click', () => {
+            uploadModal.style.display = 'none';
+        });
+        
+        closeSettingsModal.addEventListener('click', () => {
+            settingsModal.style.display = 'none';
+        });
+        
+        // 캐릭터 저장
+        saveCharacter.addEventListener('click', () => {
+            const name = characterName.value.trim() || "다마고치";
+            const imageFile = characterImage.files[0];
+            
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const newCharacter = {
+                        name: name,
+                        image: e.target.result,
+                        affection: 50,
+                        hunger: 70,
+                        happiness: 60,
+                        mood: "😊"
+                    };
+                    
+                    gameState.characters.push(newCharacter);
+                    gameState.character = { ...newCharacter };
+                    
+                    updateUI();
+                    saveGameState();
+                    loadCharacterList();
+                    
+                    characterName.value = '';
+                    characterImage.value = '';
+                };
+                reader.readAsDataURL(imageFile);
+            }
+        });
+        
+        // 설정 저장
+        saveSettings.addEventListener('click', () => {
+            const dialogues = customDialogues.value.trim().split('\n').filter(d => d.trim() !== '');
+            const gifts = customGifts.value.trim().split('\n').filter(g => g.trim() !== '');
+            const aiName = aiCharacter.value.trim();
+            
+            gameState.customDialogues = dialogues;
+            gameState.customGifts = gifts;
+            gameState.aiCharacter = aiName;
+            
+            saveGameState();
+            settingsModal.style.display = 'none';
+            
+            // AI 캐릭터 이름이 입력되었다면 AI 대화 설정
+            if (aiName) {
+                // 여기에 AI API 연결 코드를 추가할 수 있습니다
+                showSpeech(`${aiName} 캐릭터를 설정했어요!`);
+            }
+        });
+        
+        // 창 외부 클릭 시 모달 닫기
+        window.addEventListener('click', (event) => {
+            if (event.target === uploadModal) {
+                uploadModal.style.display = 'none';
+            }
+            if (event.target === settingsModal) {
+                settingsModal.style.display = 'none';
+            }
+        });
+        
+        // 페이지 로드 시 게임 상태 불러오기
+        window.addEventListener('load', loadGameState);
+    </script>
+</body>
+</html>
