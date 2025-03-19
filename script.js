@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
         hunger: 50,
         happiness: 50
     };
+    let selectedModel = 'gemini-2.0-flash'; // 기본 모델 설정
     
     let currentCharacter = null;
     let characters = [];
@@ -513,59 +514,80 @@ document.addEventListener('DOMContentLoaded', function() {
         showSpeechBubble('설정이 저장되었어요!');
     });
     
-    // API 연결 테스트 - 실제 API 연결
-    function testApiConnection() {
-        connectionStatus.textContent = '테스트 중...';
-        connectionStatus.style.color = 'orange';
-        testApiBtn.disabled = true;
-        apiConnected = false;
-        
-        if (apiKey.trim() === '') {
-            connectionStatus.textContent = '연결되지 않음';
-            connectionStatus.style.color = 'red';
-            return;
-        }
-        
-        // Gemini API 엔드포인트
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
-        
-        // 테스트 요청 전송
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{
-                        text: "안녕하세요. 이 메시지는 API 키가 유효한지 확인하기 위한 테스트입니다."
-                    }]
-                }]
-            })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('API 요청 실패');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // API 응답 확인
-            if (data.candidates && data.candidates[0].content) {
-                connectionStatus.textContent = '연결됨';
-                connectionStatus.style.color = 'green';
-                testApiBtn.disabled = false;
-                apiConnected = true;
-            } else {
-                throw new Error('API 응답 형식이 올바르지 않습니다');
-            }
-        })
-        .catch(error => {
-            connectionStatus.textContent = '연결 실패: 유효하지 않은 API 키';
-            connectionStatus.style.color = 'red';
-            console.error('API 연결 오류:', error);
-        });
+// API 연결 테스트 - 실제 API 연결 (Gemini 2.0 모델 지원)
+function testApiConnection() {
+    connectionStatus.textContent = '테스트 중...';
+    connectionStatus.style.color = 'orange';
+    testApiBtn.disabled = true;
+    apiConnected = false;
+
+    if (apiKey.trim() === '') {
+        connectionStatus.textContent = '연결되지 않음';
+        connectionStatus.style.color = 'red';
+        return;
     }
+
+    // 라디오 버튼에서 선택된 모델 확인
+    const modelRadios = document.querySelectorAll('input[name="model-select"]');
+    if (modelRadios && modelRadios.length >= 2) {
+        if (modelRadios[0].checked) {
+            selectedModel = 'gemini-2.0-flash';
+        } else if (modelRadios[1].checked) {
+            selectedModel = 'gemini-2.0-pro-exp-02-05';
+        }
+    }
+
+    // Gemini API 엔드포인트 (선택된 모델 사용)
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
+
+    console.log(`선택된 모델: ${selectedModel}`); // 디버깅용
+
+    // 테스트 요청 전송
+    fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            contents: [{
+                parts: [{
+                    text: "안녕하세요. 이 메시지는 API 키가 유효한지 확인하기 위한 테스트입니다."
+                }]
+            }],
+            generationConfig: {
+                temperature: 0.7,
+                maxOutputTokens: 100
+            }
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            // 오류 세부 정보 추출
+            return response.json().then(errorData => {
+                throw new Error(`API 요청 실패: ${errorData.error?.message || '알 수 없는 오류'}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("API 응답:", data); // 디버깅용
+
+        // API 응답 확인
+        if (data.candidates && data.candidates.length > 0 && data.candidates[0].content) {
+            connectionStatus.textContent = '연결됨';
+            connectionStatus.style.color = 'green';
+            testApiBtn.disabled = false;
+            apiConnected = true;
+        } else {
+            throw new Error('API 응답 형식이 올바르지 않습니다');
+        }
+    })
+    .catch(error => {
+        connectionStatus.textContent = `연결 실패: ${error.message}`;
+        connectionStatus.style.color = 'red';
+        console.error('API 연결 오류:', error);
+    });
+}
     
     // API 연결 버튼
     connectApiBtn.addEventListener('click', () => {
@@ -574,60 +596,76 @@ document.addEventListener('DOMContentLoaded', function() {
         testApiConnection();
     });
     
-    // API 테스트 버튼
-    testApiBtn.addEventListener('click', () => {
-        const testMessage = testMessageInput.value.trim();
-        
-        if (testMessage === '') {
-            alert('테스트 메시지를 입력해주세요.');
-            return;
+// API 테스트 버튼
+testApiBtn.addEventListener('click', () => {
+    const testMessage = testMessageInput.value.trim();
+
+    if (testMessage === '') {
+        alert('테스트 메시지를 입력해주세요.');
+        return;
+    }
+
+    if (!apiConnected) {
+        alert('먼저 API를 연결해주세요.');
+        return;
+    }
+
+    apiResponse.innerHTML = '<p>API 호출 중...</p>';
+
+    // 라디오 버튼에서 선택된 모델 다시 확인
+    const modelRadios = document.querySelectorAll('input[name="model-select"]');
+    if (modelRadios && modelRadios.length >= 2) {
+        if (modelRadios[0].checked) {
+            selectedModel = 'gemini-2.0-flash';
+        } else if (modelRadios[1].checked) {
+            selectedModel = 'gemini-2.0-pro-exp-02-05';
         }
-        
-        if (!apiConnected) {
-            alert('먼저 API를 연결해주세요.');
-            return;
-        }
-        
-        apiResponse.innerHTML = '<p>API 호출 중...</p>';
-        
-        let characterName = currentCharacter ? currentCharacter.name : '다마고치';
-        let aiName = currentCharacter && currentCharacter.aiCharacterName ? 
-                    currentCharacter.aiCharacterName : characterName;
-        
-        // Gemini API 호출
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
-        
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{
-                        text: `당신은 이제부터 ${aiName}이라는 캐릭터가 되어서 대화해주세요. 사용자 메시지: ${testMessage}`
-                    }]
+    }
+
+    let characterName = currentCharacter ? currentCharacter.name : '다마고치';
+    let aiName = currentCharacter && currentCharacter.aiCharacterName ?
+        currentCharacter.aiCharacterName : characterName;
+
+    // Gemini API 호출 (선택된 모델 사용)
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
+
+    fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            contents: [{
+                parts: [{
+                    text: `당신은 이제부터 ${aiName}이라는 캐릭터가 되어서 대화해주세요. 사용자 메시지: ${testMessage}`
                 }]
-            })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('API 요청 실패');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.candidates && data.candidates[0].content) {
-                const aiResponse = data.candidates[0].content.parts[0].text;
-                apiResponse.innerHTML = `<p>${aiResponse}</p>`;
-            } else {
-                apiResponse.innerHTML = '<p>API 응답이 올바른 형식이 아닙니다.</p>';
+            }],
+            generationConfig: {
+                temperature: 0.7,
+                maxOutputTokens: 100
             }
         })
-        .catch(error => {
-            apiResponse.innerHTML = `<p>오류 발생: ${error.message}</p>`;
-        });
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(errorData => {
+                throw new Error(`API 요청 실패: ${errorData.error?.message || '알 수 없는 오류'}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.candidates && data.candidates[0].content) {
+            const aiResponse = data.candidates[0].content.parts[0].text;
+            apiResponse.innerHTML = `<p>${aiResponse}</p>`;
+        } else {
+            apiResponse.innerHTML = '<p>API 응답이 올바른 형식이 아닙니다.</p>';
+        }
+    })
+    .catch(error => {
+        apiResponse.innerHTML = `<p>오류 발생: ${error.message}</p>`;
     });
+});
     
     // 창 외부 클릭 시 모달 닫기 (수정된 부분)
     window.onclick = function(event) {
