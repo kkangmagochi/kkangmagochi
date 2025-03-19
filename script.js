@@ -58,6 +58,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const shareModal = document.getElementById('share-modal');
     const nightOverlay = document.getElementById('night-overlay');
     
+    // 모달 관련 요소들에 대한 디버그 확인
+    console.log('모달 요소 확인:', {
+        characterModal: characterModal,
+        settingsModal: settingsModal,
+        apiModal: apiModal,
+        profileModal: profileModal,
+        shareModal: shareModal
+    });
+    
     // 모달 닫기 버튼
     const closeButtons = document.querySelectorAll('.close');
     
@@ -102,6 +111,82 @@ document.addEventListener('DOMContentLoaded', function() {
     const generateImageBtn = document.getElementById('generate-image');
     const shareImageContainer = document.getElementById('share-image-container');
     const downloadImageBtn = document.getElementById('download-image');
+    
+    // 캐릭터 타입에 따른 폼 표시 설정
+    existingCharacterRadio.addEventListener('change', function() {
+        if (this.checked) {
+            existingCharacterForm.style.display = 'block';
+            originalCharacterForm.style.display = 'none';
+        }
+    });
+    
+    originalCharacterRadio.addEventListener('change', function() {
+        if (this.checked) {
+            existingCharacterForm.style.display = 'none';
+            originalCharacterForm.style.display = 'block';
+        }
+    });
+    
+    // 모달 컨트롤 - 수정된 부분
+    characterUploadBtn.addEventListener('click', function() {
+        console.log('캐릭터 업로드 버튼 클릭됨');
+        characterModal.style.display = 'block';
+    });
+    
+    settingsBtn.addEventListener('click', function() {
+        console.log('설정 버튼 클릭됨');
+        settingsModal.style.display = 'block';
+    });
+    
+    apiConnectionBtn.addEventListener('click', function() {
+        console.log('API 연결 버튼 클릭됨');
+        apiModal.style.display = 'block';
+    });
+    
+    profileBtn.addEventListener('click', function() {
+        console.log('프로필 사진 버튼 클릭됨');
+        if (!currentCharacter) {
+            alert('먼저 캐릭터를 선택해주세요.');
+            return;
+        }
+        profileModal.style.display = 'block';
+    });
+    
+    shareBtn.addEventListener('click', function() {
+        console.log('이미지 공유 버튼 클릭됨');
+        if (!currentCharacter) {
+            alert('먼저 캐릭터를 선택해주세요.');
+            return;
+        }
+        shareModal.style.display = 'block';
+    });
+    
+    // 모달 닫기 버튼
+    closeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            console.log('모달 닫기 버튼 클릭됨');
+            this.closest('.modal').style.display = 'none';
+        });
+    });
+    
+    // 창 외부 클릭 시 모달 닫기
+    window.addEventListener('click', function(event) {
+        if (event.target === characterModal) {
+            characterModal.style.display = 'none';
+        }
+        if (event.target === settingsModal) {
+            settingsModal.style.display = 'none';
+        }
+        if (event.target === apiModal) {
+            apiModal.style.display = 'none';
+        }
+        if (event.target === profileModal) {
+            profileModal.style.display = 'none';
+        }
+        if (event.target === shareModal) {
+            shareModal.style.display = 'none';
+        }
+    });
     
     // 기본 대화 및 선물 목록
     const defaultDialogs = [
@@ -168,21 +253,6 @@ document.addEventListener('DOMContentLoaded', function() {
             "무언가 재미있는 일이 필요해요"
         ]
     };
-    
-    // 캐릭터 타입에 따른 폼 표시 설정
-    existingCharacterRadio.addEventListener('change', function() {
-        if (this.checked) {
-            existingCharacterForm.style.display = 'block';
-            originalCharacterForm.style.display = 'none';
-        }
-    });
-    
-    originalCharacterRadio.addEventListener('change', function() {
-        if (this.checked) {
-            existingCharacterForm.style.display = 'none';
-            originalCharacterForm.style.display = 'block';
-        }
-    });
     
     // 로컬 스토리지에서 데이터 불러오기
     function loadFromLocalStorage() {
@@ -721,41 +791,6 @@ document.addEventListener('DOMContentLoaded', function() {
         customGiftInput.value = '';
     });
     
-    // 모달 컨트롤
-characterUploadBtn.addEventListener('click', function() {
-    characterModal.style.display = 'block';
-});
-
-settingsBtn.addEventListener('click', function() {
-    settingsModal.style.display = 'block';
-});
-
-apiConnectionBtn.addEventListener('click', function() {
-    apiModal.style.display = 'block';
-});
-
-profileBtn.addEventListener('click', function() {
-    if (!currentCharacter) {
-        alert('먼저 캐릭터를 선택해주세요.');
-        return;
-    }
-    profileModal.style.display = 'block';
-});
-
-shareBtn.addEventListener('click', function() {
-    if (!currentCharacter) {
-        alert('먼저 캐릭터를 선택해주세요.');
-        return;
-    }
-    shareModal.style.display = 'block';
-});
-    
-    closeButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            this.closest('.modal').style.display = 'none';
-        });
-    });
-    
     // 캐릭터 저장
     saveCharacterBtn.addEventListener('click', () => {
         const name = characterNameInput.value.trim();
@@ -912,6 +947,7 @@ shareBtn.addEventListener('click', function() {
         // html2canvas가 로드되어 있는지 확인
         if (typeof html2canvas !== 'function') {
             alert('이미지 생성 라이브러리가 로드되지 않았습니다. 페이지를 새로고침해주세요.');
+            console.error('html2canvas 라이브러리를 불러오지 못했습니다.');
             return;
         }
         
@@ -1136,27 +1172,13 @@ shareBtn.addEventListener('click', function() {
         });
     });
     
-    // 창 외부 클릭 시 모달 닫기
-    window.addEventListener('click', (event) => {
-        if (event.target === characterModal) {
-            characterModal.style.display = 'none';
-        }
-        if (event.target === settingsModal) {
-            settingsModal.style.display = 'none';
-        }
-        if (event.target === apiModal) {
-            apiModal.style.display = 'none';
-        }
-        if (event.target === profileModal) {
-            profileModal.style.display = 'none';
-        }
-        if (event.target === shareModal) {
-            shareModal.style.display = 'none';
-        }
-    });
-    
     // 초기화
     loadFromLocalStorage();
     displayCurrentCharacter();
     updateStatsDisplay();
+    
+    // 이미지 공유 기능을 위한 html2canvas 로드 확인
+    if (typeof html2canvas === 'undefined') {
+        console.warn('html2canvas 라이브러리가 로드되지 않았습니다. 이미지 공유 기능이 작동하지 않을 수 있습니다.');
+    }
 });
