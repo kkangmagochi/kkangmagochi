@@ -6,7 +6,6 @@
     <title>깡통 키우기</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://html2canvas.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -77,9 +76,7 @@
             
             <div class="favorite-gifts-container">
                 <h3>좋아하는 선물 목록</h3>
-                <div id="favorite-gifts-list" class="favorite-gifts-list">
-                    <!-- 선물 목록이 여기에 표시됩니다 -->
-                </div>
+                <div id="favorite-gifts-list" class="favorite-gifts-list"></div>
             </div>
         </div>
         
@@ -149,9 +146,7 @@
                 </div>
                 
                 <h3>저장된 캐릭터</h3>
-                <div id="saved-characters-list" class="saved-characters">
-                    <!-- 저장된 캐릭터 목록이 여기에 표시됩니다 -->
-                </div>
+                <div id="saved-characters-list" class="saved-characters"></div>
             </div>
         </div>
         
@@ -211,9 +206,7 @@
                 </div>
                 <div class="form-group">
                     <label>응답:</label>
-                    <div id="api-response" class="api-response">
-                        <!-- API 응답이 여기에 표시됩니다 -->
-                    </div>
+                    <div id="api-response" class="api-response"></div>
                 </div>
             </div>
         </div>
@@ -248,9 +241,7 @@
                 <div class="form-group">
                     <button id="generate-image" class="modal-button">이미지 생성하기</button>
                 </div>
-                <div id="share-image-container" class="share-image-container">
-                    <!-- 생성된 이미지가 여기에 표시됩니다 -->
-                </div>
+                <div id="share-image-container" class="share-image-container"></div>
                 <div class="form-group">
                     <button id="download-image" class="modal-button" disabled>이미지 다운로드</button>
                 </div>
@@ -258,6 +249,7 @@
         </div>
     </div>
     
+    <script src="https://html2canvas.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
