@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const characterImage = document.getElementById('character-image');
     const speechBubble = document.getElementById('speech-bubble');
     const characterSpeech = document.getElementById('character-speech');
+    const gameTitle = document.getElementById('game-title');
     
     const affectionBar = document.getElementById('affection-bar');
     const hungerBar = document.getElementById('hunger-bar');
@@ -65,6 +66,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const testMessageInput = document.getElementById('test-message');
     const testApiBtn = document.getElementById('test-api');
     const apiResponse = document.getElementById('api-response');
+    
+    // 기본 대화 및 선물 목록
+    const defaultDialogs = [
+        "오늘은 날씨가 좋네요!",
+        "같이 놀아요!",
+        "뭐하고 있어요?",
+        "기분이 좋아요!",
+        "심심해요~"
+    ];
+    
+    const defaultGifts = [
+        "귀여운 인형",
+        "맛있는 초콜릿",
+        "예쁜 꽃",
+        "특별한 책",
+        "멋진 옷"
+    ];
     
     // 로컬 스토리지에서 데이터 불러오기
     function loadFromLocalStorage() {
@@ -119,6 +137,17 @@ document.addEventListener('DOMContentLoaded', function() {
         saveToLocalStorage();
     }
     
+    // 게임 타이틀 업데이트
+    function updateGameTitle() {
+        if (currentCharacter) {
+            gameTitle.textContent = `${currentCharacter.name} 키우기`;
+            document.title = `${currentCharacter.name} 키우기`;
+        } else {
+            gameTitle.textContent = '깡통 키우기';
+            document.title = '깡통 키우기';
+        }
+    }
+    
     // 현재 캐릭터 표시
     function displayCurrentCharacter() {
         if (currentCharacter) {
@@ -127,6 +156,9 @@ document.addEventListener('DOMContentLoaded', function() {
             noCharacterDisplay.classList.add('hide');
             characterContainer.classList.remove('hide');
             characterContainer.classList.add('show');
+            
+            // 게임 타이틀 업데이트
+            updateGameTitle();
             
             // 현재 캐릭터 이름 설정 창에 표시
             currentCharacterName.textContent = currentCharacter.name;
@@ -157,6 +189,9 @@ document.addEventListener('DOMContentLoaded', function() {
             noCharacterDisplay.classList.add('show');
             characterContainer.classList.remove('show');
             characterContainer.classList.add('hide');
+            
+            // 게임 타이틀 업데이트
+            updateGameTitle();
             
             // 설정 창 초기화
             currentCharacterName.textContent = '없음';
@@ -223,16 +258,59 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500);
     }
     
+    // 랜덤 대화 선택
+    function getRandomDialog() {
+        if (!currentCharacter) return defaultDialogs[Math.floor(Math.random() * defaultDialogs.length)];
+        
+        let dialogs = defaultDialogs;
+        
+        if (currentCharacter.customDialog && currentCharacter.customDialog.trim() !== '') {
+            dialogs = currentCharacter.customDialog.split(',').map(dialog => dialog.trim());
+            if (dialogs.length === 0 || (dialogs.length === 1 && dialogs[0] === '')) {
+                dialogs = defaultDialogs;
+            }
+        }
+        
+        return dialogs[Math.floor(Math.random() * dialogs.length)];
+    }
+    
+    // 랜덤 선물 선택
+    function getRandomGift() {
+        if (!currentCharacter) return defaultGifts[Math.floor(Math.random() * defaultGifts.length)];
+        
+        let gifts = defaultGifts;
+        
+        if (currentCharacter.customGift && currentCharacter.customGift.trim() !== '') {
+            gifts = currentCharacter.customGift.split(',').map(gift => gift.trim());
+            if (gifts.length === 0 || (gifts.length === 1 && gifts[0] === '')) {
+                gifts = defaultGifts;
+            }
+        }
+        
+        return gifts[Math.floor(Math.random() * gifts.length)];
+    }
+    
     // 밤/낮 전환 애니메이션
     function playNightAnimation() {
         // 밤 효과 표시
         nightOverlay.style.opacity = '1';
         
-        // 3초 후 밤 효과 숨기기
+        // 1.5초 후 밤 효과 숨기기
         setTimeout(() => {
             nightOverlay.style.opacity = '0';
-        }, 3000);
+        }, 1500);
     }
+    
+    // 캐릭터 이미지 클릭 이벤트
+    characterImage.addEventListener('click', () => {
+        if (!currentCharacter) return;
+        
+        // 애니메이션 실행
+        animateCharacter();
+        
+        // 랜덤 대화 표시
+        showSpeechBubble(getRandomDialog());
+    });
     
     // 액션 버튼 이벤트
     feedButton.addEventListener('click', () => {
@@ -258,7 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateStatsDisplay();
         
         // 캐릭터 반응
-        showSpeechBubble('재미있어요! 더 놀아요!');
+        showSpeechBubble(getRandomDialog());
         animateCharacter();
     });
     
@@ -270,14 +348,11 @@ document.addEventListener('DOMContentLoaded', function() {
         stats.happiness = Math.min(100, stats.happiness + 15);
         updateStatsDisplay();
         
+        // 선물 선택
+        const gift = getRandomGift();
+        
         // 캐릭터 반응
-        let message = '선물이에요? 고마워요!';
-        
-        if (currentCharacter.customGift) {
-            message = `${currentCharacter.customGift}! 정말 좋아해요!`;
-        }
-        
-        showSpeechBubble(message);
+        showSpeechBubble(`${gift}! 정말 좋아해요!`);
         animateCharacter();
     });
     
@@ -306,7 +381,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             updateStatsDisplay();
-        }, 3000);
+        }, 1500);
     });
     
     // 모달 컨트롤
@@ -399,29 +474,58 @@ document.addEventListener('DOMContentLoaded', function() {
         showSpeechBubble('설정이 저장되었어요!');
     });
     
-    // API 연결 테스트
+    // API 연결 테스트 - 실제 API 연결
     function testApiConnection() {
-        // 실제 프로덕션에서는 API 키 검증이 필요합니다
+        connectionStatus.textContent = '테스트 중...';
+        connectionStatus.style.color = 'orange';
+        testApiBtn.disabled = true;
+        apiConnected = false;
+        
         if (apiKey.trim() === '') {
             connectionStatus.textContent = '연결되지 않음';
             connectionStatus.style.color = 'red';
-            testApiBtn.disabled = true;
-            apiConnected = false;
             return;
         }
         
-        // 간단한 테스트를 위해 키 길이만 확인
-        if (apiKey.length > 10) {
-            connectionStatus.textContent = '연결됨';
-            connectionStatus.style.color = 'green';
-            testApiBtn.disabled = false;
-            apiConnected = true;
-        } else {
-            connectionStatus.textContent = '유효하지 않은 API 키';
+        // Gemini API 엔드포인트
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+        
+        // 테스트 요청 전송
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: "안녕하세요. 이 메시지는 API 키가 유효한지 확인하기 위한 테스트입니다."
+                    }]
+                }]
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('API 요청 실패');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // API 응답 확인
+            if (data.candidates && data.candidates[0].content) {
+                connectionStatus.textContent = '연결됨';
+                connectionStatus.style.color = 'green';
+                testApiBtn.disabled = false;
+                apiConnected = true;
+            } else {
+                throw new Error('API 응답 형식이 올바르지 않습니다');
+            }
+        })
+        .catch(error => {
+            connectionStatus.textContent = '연결 실패: 유효하지 않은 API 키';
             connectionStatus.style.color = 'red';
-            testApiBtn.disabled = true;
-            apiConnected = false;
-        }
+            console.error('API 연결 오류:', error);
+        });
     }
     
     // API 연결 버튼
@@ -440,55 +544,50 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // 실제 API 호출 대신 가상의 응답을 생성합니다
-        // 실제 구현에서는 Google Gemini API를 호출해야 합니다
+        if (!apiConnected) {
+            alert('먼저 API를 연결해주세요.');
+            return;
+        }
+        
         apiResponse.innerHTML = '<p>API 호출 중...</p>';
         
-        setTimeout(() => {
-            let characterName = currentCharacter ? currentCharacter.name : '다마고치';
-            let aiName = currentCharacter && currentCharacter.aiCharacterName ? 
-                        currentCharacter.aiCharacterName : characterName;
-            
-            const responses = [
-                `안녕하세요! 저는 ${aiName}이에요. ${testMessage}라고 말씀하셨네요! 오늘 기분이 어떠세요?`,
-                `${testMessage}? 그것에 대해 더 이야기해 주세요! 저는 ${aiName}으로서 당신과 대화하는 게 정말 즐거워요!`,
-                `${aiName}이(가) 당신의 말을 들었어요: "${testMessage}". 재미있는 이야기네요! 더 알려주세요!`
-            ];
-            
-            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-            apiResponse.innerHTML = `<p>${randomResponse}</p>`;
-            
-            // 실제 Gemini API 구현 예시:
-            /*
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
-            
-            fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: `당신은 이제부터 ${aiName}이라는 캐릭터가 되어서 대화해주세요. 사용자 메시지: ${testMessage}`
-                        }]
+        let characterName = currentCharacter ? currentCharacter.name : '다마고치';
+        let aiName = currentCharacter && currentCharacter.aiCharacterName ? 
+                    currentCharacter.aiCharacterName : characterName;
+        
+        // Gemini API 호출
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+        
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: `당신은 이제부터 ${aiName}이라는 캐릭터가 되어서 대화해주세요. 사용자 메시지: ${testMessage}`
                     }]
-                })
+                }]
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.candidates && data.candidates[0].content) {
-                    const aiResponse = data.candidates[0].content.parts[0].text;
-                    apiResponse.innerHTML = `<p>${aiResponse}</p>`;
-                } else {
-                    apiResponse.innerHTML = '<p>API 응답이 올바른 형식이 아닙니다.</p>';
-                }
-            })
-            .catch(error => {
-                apiResponse.innerHTML = `<p>오류 발생: ${error.message}</p>`;
-            });
-            */
-        }, 1000);
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('API 요청 실패');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.candidates && data.candidates[0].content) {
+                const aiResponse = data.candidates[0].content.parts[0].text;
+                apiResponse.innerHTML = `<p>${aiResponse}</p>`;
+            } else {
+                apiResponse.innerHTML = '<p>API 응답이 올바른 형식이 아닙니다.</p>';
+            }
+        })
+        .catch(error => {
+            apiResponse.innerHTML = `<p>오류 발생: ${error.message}</p>`;
+        });
     });
     
     // 창 외부 클릭 시 모달 닫기
