@@ -131,45 +131,45 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // 모달 컨트롤 - 수정된 부분
-    if (characterUploadBtn) {
-        characterUploadBtn.onclick = function() {
-            console.log('캐릭터 업로드 버튼 클릭됨');
-            if (characterModal) {
-                characterModal.style.display = 'block';
-            } else {
-                console.error('characterModal 요소를 찾을 수 없습니다.');
-            }
-        };
-    } else {
-        console.error('characterUploadBtn 요소를 찾을 수 없습니다.');
-    }
-    
-    if (settingsBtn) {
-        settingsBtn.onclick = function() {
-            console.log('설정 버튼 클릭됨');
-            if (settingsModal) {
-                settingsModal.style.display = 'block';
-            } else {
-                console.error('settingsModal 요소를 찾을 수 없습니다.');
-            }
-        };
-    } else {
-        console.error('settingsBtn 요소를 찾을 수 없습니다.');
-    }
-    
-    if (apiConnectionBtn) {
-        apiConnectionBtn.onclick = function() {
-            console.log('API 연결 버튼 클릭됨');
-            if (apiModal) {
-                apiModal.style.display = 'block';
-            } else {
-                console.error('apiModal 요소를 찾을 수 없습니다.');
-            }
-        };
-    } else {
-        console.error('apiConnectionBtn 요소를 찾을 수 없습니다.');
-    }
+// 모달 컨트롤 - 수정된 부분
+if (characterUploadBtn) {
+    characterUploadBtn.onclick = function() {
+        console.log('캐릭터 업로드 버튼 클릭됨');
+        if (characterModal) {
+            characterModal.style.display = 'block';
+        } else {
+            console.error('characterModal 요소를 찾을 수 없습니다.');
+        }
+    };
+} else {
+    console.error('characterUploadBtn 요소를 찾을 수 없습니다.');
+}
+
+if (settingsBtn) {
+    settingsBtn.onclick = function() {
+        console.log('설정 버튼 클릭됨');
+        if (settingsModal) {
+            settingsModal.style.display = 'block';
+        } else {
+            console.error('settingsModal 요소를 찾을 수 없습니다.');
+        }
+    };
+} else {
+    console.error('settingsBtn 요소를 찾을 수 없습니다.');
+}
+
+if (apiConnectionBtn) {
+    apiConnectionBtn.onclick = function() {
+        console.log('API 연결 버튼 클릭됨');
+        if (apiModal) {
+            apiModal.style.display = 'block';
+        } else {
+            console.error('apiModal 요소를 찾을 수 없습니다.');
+        }
+    };
+} else {
+    console.error('apiConnectionBtn 요소를 찾을 수 없습니다.');
+}
     
     if (profileBtn) {
         profileBtn.onclick = function() {
@@ -201,16 +201,16 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
     
-    // 모달 닫기 버튼
-    closeButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            console.log('모달 닫기 버튼 클릭됨');
-            const modal = this.closest('.modal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        });
+// 모달 닫기 버튼
+closeButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        console.log('모달 닫기 버튼 클릭됨');
+        const modal = this.closest('.modal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
     });
+});
     
     // 기본 대화 및 선물 목록
     const defaultDialogs = [
@@ -1255,24 +1255,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // 창 외부 클릭 시 모달 닫기
-    window.addEventListener('click', function(event) {
-        if (characterModal && event.target === characterModal) {
-            characterModal.style.display = 'none';
-        }
-        if (settingsModal && event.target === settingsModal) {
-            settingsModal.style.display = 'none';
-        }
-        if (apiModal && event.target === apiModal) {
-            apiModal.style.display = 'none';
-        }
-        if (profileModal && event.target === profileModal) {
-            profileModal.style.display = 'none';
-        }
-        if (shareModal && event.target === shareModal) {
-            shareModal.style.display = 'none';
-        }
-    });
+// 창 외부 클릭 시 모달 닫기
+window.onclick = function(event) {
+    if (characterModal && event.target === characterModal) {
+        characterModal.style.display = 'none';
+    }
+    if (settingsModal && event.target === settingsModal) {
+        settingsModal.style.display = 'none';
+    }
+    if (apiModal && event.target === apiModal) {
+        apiModal.style.display = 'none';
+    }
+};
     
     // 초기화
     loadFromLocalStorage();
