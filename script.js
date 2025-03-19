@@ -474,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showSpeechBubble('설정이 저장되었어요!');
     });
     
-    // API 연결 테스트 - 실제 API 연결
+    // API 연결 테스트 - 실제 API 연결 (Gemini-1.5-pro 모델 사용)
     function testApiConnection() {
         connectionStatus.textContent = '테스트 중...';
         connectionStatus.style.color = 'orange';
@@ -487,8 +487,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Gemini API 엔드포인트
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+        // Gemini API 최신 엔드포인트 (v1beta 사용)
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
         
         // 테스트 요청 전송
         fetch(apiUrl, {
@@ -501,18 +501,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     parts: [{
                         text: "안녕하세요. 이 메시지는 API 키가 유효한지 확인하기 위한 테스트입니다."
                     }]
-                }]
+                }],
+                generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: 100
+                }
             })
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('API 요청 실패');
+                // 오류 세부 정보 추출
+                return response.json().then(errorData => {
+                    throw new Error(`API 요청 실패: ${errorData.error?.message || '알 수 없는 오류'}`);
+                });
             }
             return response.json();
         })
         .then(data => {
-            // API 응답 확인
-            if (data.candidates && data.candidates[0].content) {
+            console.log("API 응답:", data); // 디버깅용
+            
+            // API 응답 확인 (최신 Gemini API 응답 구조)
+            if (data.candidates && data.candidates.length > 0 && data.candidates[0].content) {
                 connectionStatus.textContent = '연결됨';
                 connectionStatus.style.color = 'green';
                 testApiBtn.disabled = false;
@@ -522,7 +531,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(error => {
-            connectionStatus.textContent = '연결 실패: 유효하지 않은 API 키';
+            connectionStatus.textContent = `연결 실패: ${error.message}`;
             connectionStatus.style.color = 'red';
             console.error('API 연결 오류:', error);
         });
@@ -555,8 +564,13 @@ document.addEventListener('DOMContentLoaded', function() {
         let aiName = currentCharacter && currentCharacter.aiCharacterName ? 
                     currentCharacter.aiCharacterName : characterName;
         
-        // Gemini API 호출
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+        // Gemini API 최신 버전 호출
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
+        
+        const systemPrompt = `당신은 이제부터 '${aiName}'이라는 캐릭터로서 사용자와 대화합니다. 
+        ${aiName}은(는) 다마고치 게임 속 캐릭터로, 귀엽고 친근한 말투를 사용합니다. 
+        항상 짧고 간결하게 응답하며(2-3문장 이내), 이모티콘을 적절히 사용해 감정을 표현합니다.
+        ${aiName}의 특성을 살려 사용자의 메시지에 자연스럽게 반응해주세요.`;
         
         fetch(apiUrl, {
             method: 'POST',
@@ -564,21 +578,64 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                contents: [{
-                    parts: [{
-                        text: `당신은 이제부터 ${aiName}이라는 캐릭터가 되어서 대화해주세요. 사용자 메시지: ${testMessage}`
-                    }]
-                }]
+                contents: [
+                    {
+                        role: "user",
+                        parts: [
+                            { text: systemPrompt }
+                        ]
+                    },
+                    {
+                        role: "model",
+                        parts: [
+                            { text: "네, 이제부터 저는 귀여운 다마고치 캐릭터 '"+aiName+"'으로 대화할게요! 짧고 친근하게 말할게요~ 🥰" }
+                        ]
+                    },
+                    {
+                        role: "user",
+                        parts: [
+                            { text: testMessage }
+                        ]
+                    }
+                ],
+                generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: 150,
+                    topP: 0.95,
+                    topK: 40
+                },
+                safetySettings: [
+                    {
+                        category: "HARM_CATEGORY_HARASSMENT",
+                        threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                    },
+                    {
+                        category: "HARM_CATEGORY_HATE_SPEECH",
+                        threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                    },
+                    {
+                        category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                        threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                    },
+                    {
+                        category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+                        threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                    }
+                ]
             })
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('API 요청 실패');
+                return response.json().then(errorData => {
+                    throw new Error(`API 요청 실패: ${errorData.error?.message || '알 수 없는 오류'}`);
+                });
             }
             return response.json();
         })
         .then(data => {
-            if (data.candidates && data.candidates[0].content) {
+            console.log("API 테스트 응답:", data); // 디버깅용
+            
+            if (data.candidates && data.candidates.length > 0 && data.candidates[0].content) {
                 const aiResponse = data.candidates[0].content.parts[0].text;
                 apiResponse.innerHTML = `<p>${aiResponse}</p>`;
             } else {
@@ -587,6 +644,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             apiResponse.innerHTML = `<p>오류 발생: ${error.message}</p>`;
+            console.error('API 테스트 오류:', error);
         });
     });
     
