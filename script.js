@@ -722,33 +722,33 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // 모달 컨트롤
-    characterUploadBtn.addEventListener('click', () => {
-        characterModal.style.display = 'block';
-    });
-    
-    settingsBtn.addEventListener('click', () => {
-        settingsModal.style.display = 'block';
-    });
-    
-    apiConnectionBtn.addEventListener('click', () => {
-        apiModal.style.display = 'block';
-    });
-    
-    profileBtn.addEventListener('click', () => {
-        if (!currentCharacter) {
-            alert('먼저 캐릭터를 선택해주세요.');
-            return;
-        }
-        profileModal.style.display = 'block';
-    });
-    
-    shareBtn.addEventListener('click', () => {
-        if (!currentCharacter) {
-            alert('먼저 캐릭터를 선택해주세요.');
-            return;
-        }
-        shareModal.style.display = 'block';
-    });
+characterUploadBtn.addEventListener('click', function() {
+    characterModal.style.display = 'block';
+});
+
+settingsBtn.addEventListener('click', function() {
+    settingsModal.style.display = 'block';
+});
+
+apiConnectionBtn.addEventListener('click', function() {
+    apiModal.style.display = 'block';
+});
+
+profileBtn.addEventListener('click', function() {
+    if (!currentCharacter) {
+        alert('먼저 캐릭터를 선택해주세요.');
+        return;
+    }
+    profileModal.style.display = 'block';
+});
+
+shareBtn.addEventListener('click', function() {
+    if (!currentCharacter) {
+        alert('먼저 캐릭터를 선택해주세요.');
+        return;
+    }
+    shareModal.style.display = 'block';
+});
     
     closeButtons.forEach(button => {
         button.addEventListener('click', function() {
