@@ -1,0 +1,431 @@
+:root {
+    --primary-color: #f8d7da;
+    --secondary-color: #d8e8f3;
+    --tertiary-color: #e2f0cb;
+    --accent-color: #ffedc9;
+    --text-color: #5a5a5a;
+    --border-color: #c9d8e6;
+    --button-hover: #ffcad4;
+    --progress-bar-bg: #e9ecef;
+    --progress-affection: #ff9eb5;
+    --progress-hunger: #86c1ff;
+    --progress-happiness: #a5dbb2;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+body {
+    background-color: #f5f8fa;
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    max-width: 1000px;
+    width: 100%;
+    position: relative;
+}
+
+.tamagotchi-frame {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 24px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 100%;
+    max-width: 600px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 8px solid white;
+}
+
+.tamagotchi-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.tamagotchi-header h1 {
+    font-size: 2rem;
+    color: #4a4a4a;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.stats-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 15px;
+    border-radius: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stat span {
+    min-width: 60px;
+    font-weight: 500;
+}
+
+.stat span:last-child {
+    min-width: auto;
+    width: 30px;
+    text-align: right;
+}
+
+.progress-bar {
+    flex: 1;
+    background-color: var(--progress-bar-bg);
+    height: 12px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    width: 50%;
+    transition: width 0.5s ease;
+}
+
+#affection-bar {
+    background-color: var(--progress-affection);
+}
+
+#hunger-bar {
+    background-color: var(--progress-hunger);
+}
+
+#happiness-bar {
+    background-color: var(--progress-happiness);
+}
+
+.character-display {
+    background-color: white;
+    border-radius: 16px;
+    height: 280px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#character-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#character-image {
+    max-width: 180px;
+    max-height: 180px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.speech-bubble {
+    position: absolute;
+    top: 30px;
+    background-color: var(--accent-color);
+    border-radius: 20px;
+    padding: 12px 15px;
+    max-width: 80%;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.speech-bubble:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 10px 10px 0;
+    border-style: solid;
+    border-color: var(--accent-color) transparent;
+}
+
+.no-character-message {
+    text-align: center;
+    padding: 20px;
+    background-color: rgba(248, 215, 218, 0.3);
+    border-radius: 12px;
+    max-width: 80%;
+}
+
+.no-character-message p {
+    margin-bottom: 10px;
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.action-button {
+    padding: 14px 10px;
+    background-color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.action-button:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-2px);
+}
+
+.action-button:active {
+    transform: translateY(0);
+}
+
+.side-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-left: 20px;
+}
+
+.control-button {
+    padding: 15px;
+    background-color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    min-width: 120px;
+}
+
+.control-button:hover {
+    background-color: var(--accent-color);
+    transform: translateY(-2px);
+}
+
+/* 모달 스타일 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #fff9f9, #f0f8ff);
+    margin: 10% auto;
+    padding: 25px;
+    border-radius: 16px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #aaa;
+}
+
+.close:hover {
+    color: #555;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.modal-button {
+    padding: 12px 20px;
+    background-color: var(--secondary-color);
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-button:hover {
+    background-color: var(--primary-color);
+}
+
+.saved-characters {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.character-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.character-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.character-card img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 5px;
+}
+
+.character-card p {
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.api-response {
+    min-height: 100px;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.current-character-info {
+    background-color: var(--accent-color);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.hide {
+    display: none;
+}
+
+.show {
+    display: flex;
+}
+
+/* 애니메이션 효과 */
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.bounce {
+    animation: bounce 0.5s;
+}
+
+.night-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 20, 0.8);
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 2s ease-in-out;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .side-controls {
+        flex-direction: row;
+        margin-left: 0;
+        margin-top: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .tamagotchi-frame {
+        max-width: 100%;
+    }
+    
+    .action-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .tamagotchi-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .action-buttons {
+        grid-template-columns: 1fr;
+    }
+}
