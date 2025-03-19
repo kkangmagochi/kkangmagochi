@@ -6,12 +6,14 @@
     <title>깡통 키우기</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://html2canvas.min.js"></script>
 </head>
 <body>
     <div class="container">
         <div class="tamagotchi-frame">
             <div class="tamagotchi-header">
                 <h1 id="game-title">깡통 키우기</h1>
+                <div class="day-counter">만난지 <span id="days-count">0</span>일째</div>
             </div>
             
             <div class="stats-container">
@@ -20,22 +22,23 @@
                     <div class="progress-bar">
                         <div id="affection-bar" class="progress"></div>
                     </div>
-                    <span id="affection-value">50</span>
+                    <span id="affection-value">0</span>
                 </div>
                 <div class="stat">
                     <span>허기:</span>
                     <div class="progress-bar">
                         <div id="hunger-bar" class="progress"></div>
                     </div>
-                    <span id="hunger-value">50</span>
+                    <span id="hunger-value">0</span>
                 </div>
                 <div class="stat">
                     <span>행복도:</span>
                     <div class="progress-bar">
                         <div id="happiness-bar" class="progress"></div>
                     </div>
-                    <span id="happiness-value">50</span>
+                    <span id="happiness-value">0</span>
                 </div>
+                <button id="reset-stats" class="small-button">스탯 리셋</button>
             </div>
             
             <div class="character-display">
@@ -46,9 +49,15 @@
                     </div>
                 </div>
                 <div id="character-container" class="hide">
+                    <div id="character-status" class="character-status">
+                        <p>상태: 기본 상태</p>
+                    </div>
                     <img id="character-image" src="" alt="캐릭터">
                     <div class="speech-bubble hide" id="speech-bubble">
                         <p id="character-speech">안녕하세요!</p>
+                    </div>
+                    <div id="profile-frame" class="profile-frame">
+                        <img id="profile-image" src="" alt="프로필">
                     </div>
                 </div>
                 <div id="night-overlay" class="night-overlay"></div>
@@ -60,12 +69,26 @@
                 <button id="gift-button" class="action-button">선물주기</button>
                 <button id="sleep-button" class="action-button">잠자기</button>
             </div>
+            
+            <div class="custom-gift-container">
+                <input type="text" id="custom-gift-input" placeholder="선물 직접 입력하기">
+                <button id="custom-gift-button" class="small-button">주기</button>
+            </div>
+            
+            <div class="favorite-gifts-container">
+                <h3>좋아하는 선물 목록</h3>
+                <div id="favorite-gifts-list" class="favorite-gifts-list">
+                    <!-- 선물 목록이 여기에 표시됩니다 -->
+                </div>
+            </div>
         </div>
         
         <div class="side-controls">
             <button id="character-upload-btn" class="control-button">캐릭터 업로드</button>
             <button id="settings-btn" class="control-button">설정</button>
             <button id="api-connection-btn" class="control-button">API 연결</button>
+            <button id="profile-btn" class="control-button">프로필 사진</button>
+            <button id="share-btn" class="control-button">이미지 공유</button>
         </div>
         
         <!-- 모달창 -->
@@ -81,6 +104,46 @@
                     <label for="character-img">캐릭터 이미지:</label>
                     <input type="file" id="character-img" name="character-img" accept="image/*">
                 </div>
+                
+                <div class="character-type-selector">
+                    <div class="form-group">
+                        <label>캐릭터 타입:</label>
+                        <div class="radio-group">
+                            <input type="radio" id="existing-character" name="character-type" value="existing" checked>
+                            <label for="existing-character">기존 작품 캐릭터</label>
+                            
+                            <input type="radio" id="original-character" name="character-type" value="original">
+                            <label for="original-character">오리지널 캐릭터</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="existing-character-form">
+                    <div class="form-group">
+                        <label for="character-genre">장르:</label>
+                        <input type="text" id="character-genre" placeholder="예: 애니메이션, 게임, 만화 등">
+                    </div>
+                    <div class="form-group">
+                        <label for="character-speech">말투:</label>
+                        <input type="text" id="character-speech-style" placeholder="예: 존댓말, 반말, 특이한 어미 등">
+                    </div>
+                </div>
+                
+                <div id="original-character-form" style="display:none;">
+                    <div class="form-group">
+                        <label for="character-world">세계관:</label>
+                        <textarea id="character-world" rows="3" placeholder="캐릭터가 살고 있는 세계에 대해 설명해주세요."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="character-personality">성격 키워드:</label>
+                        <input type="text" id="character-personality" placeholder="예: 활발함, 수줍음, 엉뚱함 등">
+                    </div>
+                    <div class="form-group">
+                        <label for="character-speech-original">말투:</label>
+                        <input type="text" id="character-speech-original" placeholder="예: 존댓말, 반말, 특이한 어미 등">
+                    </div>
+                </div>
+                
                 <div class="form-group">
                     <button id="save-character" class="modal-button">저장하기</button>
                 </div>
@@ -125,6 +188,13 @@
                     <input type="text" id="api-key" placeholder="Google Gemini API 키를 입력하세요">
                 </div>
                 <div class="form-group">
+                    <label for="model-select">모델 선택:</label>
+                    <select id="model-select">
+                        <option value="gemini-2.0-flash">Gemini 2.0 Flash (빠르고 효율적)</option>
+                        <option value="gemini-2.0-pro-exp-02-05">Gemini 2.0 Pro (더 강력한 성능)</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <button id="connect-api" class="modal-button">연결하기</button>
                 </div>
                 <div class="api-status">
@@ -144,6 +214,45 @@
                     <div id="api-response" class="api-response">
                         <!-- API 응답이 여기에 표시됩니다 -->
                     </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="profile-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>프로필 사진 설정</h2>
+                <div id="profile-character-name" class="current-character-info">캐릭터: <span>없음</span></div>
+                
+                <div class="form-group">
+                    <label for="profile-img">프로필 이미지:</label>
+                    <input type="file" id="profile-img" name="profile-img" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <button id="save-profile" class="modal-button">저장하기</button>
+                </div>
+                
+                <div id="current-profile" class="current-profile">
+                    <h3>현재 프로필</h3>
+                    <div class="profile-preview">
+                        <img id="profile-preview" src="" alt="프로필 미리보기">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="share-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>이미지 공유</h2>
+                <div class="form-group">
+                    <button id="generate-image" class="modal-button">이미지 생성하기</button>
+                </div>
+                <div id="share-image-container" class="share-image-container">
+                    <!-- 생성된 이미지가 여기에 표시됩니다 -->
+                </div>
+                <div class="form-group">
+                    <button id="download-image" class="modal-button" disabled>이미지 다운로드</button>
                 </div>
             </div>
         </div>
