@@ -1182,3 +1182,64 @@ document.addEventListener('DOMContentLoaded', function() {
         console.warn('html2canvas 라이브러리가 로드되지 않았습니다. 이미지 공유 기능이 작동하지 않을 수 있습니다.');
     }
 });
+
+// script.js의 맨 아래에 추가
+document.addEventListener('DOMContentLoaded', function() {
+    // 모달 버튼들 직접 선택
+    const characterUploadBtn = document.getElementById('character-upload-btn');
+    const settingsBtn = document.getElementById('settings-btn');
+    const apiConnectionBtn = document.getElementById('api-connection-btn');
+    const profileBtn = document.getElementById('profile-btn');
+    const shareBtn = document.getElementById('share-btn');
+    
+    // 모달 요소들 직접 선택
+    const characterModal = document.getElementById('character-modal');
+    const settingsModal = document.getElementById('settings-modal');
+    const apiModal = document.getElementById('api-modal');
+    const profileModal = document.getElementById('profile-modal');
+    const shareModal = document.getElementById('share-modal');
+    
+    // 이벤트 리스너 직접 추가
+    if(characterUploadBtn && characterModal) {
+        characterUploadBtn.onclick = function() { 
+            characterModal.style.display = 'block'; 
+            console.log('캐릭터 업로드 모달 열림');
+        };
+    }
+    
+    if(settingsBtn && settingsModal) {
+        settingsBtn.onclick = function() { 
+            settingsModal.style.display = 'block'; 
+            console.log('설정 모달 열림');
+        };
+    }
+    
+    if(apiConnectionBtn && apiModal) {
+        apiConnectionBtn.onclick = function() { 
+            apiModal.style.display = 'block';
+            console.log('API 연결 모달 열림'); 
+        };
+    }
+    
+    if(profileBtn && profileModal) {
+        profileBtn.onclick = function() {
+            if (!currentCharacter) {
+                alert('먼저 캐릭터를 선택해주세요.');
+                return;
+            }
+            profileModal.style.display = 'block';
+            console.log('프로필 모달 열림');
+        };
+    }
+    
+    if(shareBtn && shareModal) {
+        shareBtn.onclick = function() {
+            if (!currentCharacter) {
+                alert('먼저 캐릭터를 선택해주세요.');
+                return;
+            }
+            shareModal.style.display = 'block';
+            console.log('공유 모달 열림');
+        };
+    }
+});
