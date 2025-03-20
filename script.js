@@ -37,35 +37,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const profileImage = document.getElementById('profile-image');
   const statsResetBtn = document.getElementById('stats-reset-btn');
 
-  // 캐릭터 타입 변경 시 placeholder 변경
-characterTypeExisting.addEventListener('change', updateSettingPlaceholder);
-characterTypeOriginal.addEventListener('change', updateSettingPlaceholder);
-
-// 편집 캐릭터 타입 변경 시 placeholder 변경
-editCharacterTypeExisting.addEventListener('change', updateEditSettingPlaceholder);
-editCharacterTypeOriginal.addEventListener('change', updateEditSettingPlaceholder);
-
-function updateSettingPlaceholder() {
-    if (characterTypeExisting.checked) {
-        characterSettingInput.placeholder = "간단한 캐릭터 설명을 적어주세요. 예: '장르 이름'의 '캐릭터' \n성격, 말투 등 세부 조정이 필요한 경우 세부 커스텀을 이용해주세요.";
-    } else {
-        characterSettingInput.placeholder = "간단한 캐릭터 설명을 적어주세요.\n성격, 말투 등 세부 조정이 필요한 경우 세부 커스텀을 이용해주세요.";
-    }
-}
-
-function updateEditSettingPlaceholder() {
-    if (editCharacterTypeExisting.checked) {
-        editCharacterSettingInput.placeholder = "간단한 캐릭터 설명을 적어주세요. 예: '장르 이름'의 '캐릭터' \n성격, 말투 등 세부 조정이 필요한 경우 세부 커스텀을 이용해주세요.";
-    } else {
-        editCharacterSettingInput.placeholder = "간단한 캐릭터 설명을 적어주세요.\n성격, 말투 등 세부 조정이 필요한 경우 세부 커스텀을 이용해주세요.";
-    }
-}
-
-// 초기 placeholder 설정
-updateSettingPlaceholder();
-updateEditSettingPlaceholder();
-
-
   // 액션 버튼
   const feedButton = document.getElementById('feed-button');
   const playButton = document.getElementById('play-button');
@@ -108,7 +79,6 @@ updateEditSettingPlaceholder();
   const characterLoreInput = document.getElementById('character-lore');
   const characterPersonalityInput = document.getElementById('character-personality');
   const characterSpeechStyleInput = document.getElementById('character-speech-style');
-  const characterSettingInput = document.getElementById('character-setting');
   const saveCharacterBtn = document.getElementById('save-character');
   const savedCharactersList = document.getElementById('saved-characters-list');
   const editCharacterBtn = document.getElementById('edit-character-btn');
@@ -136,7 +106,6 @@ updateEditSettingPlaceholder();
   const editCharacterLoreInput = document.getElementById('edit-character-lore');
   const editCharacterPersonalityInput = document.getElementById('edit-character-personality');
   const editCharacterSpeechStyleInput = document.getElementById('edit-character-speech-style');
-  const editCharacterSettingInput = document.getElementById('edit-character-setting');
   const updateCharacterBtn = document.getElementById('update-character');
 
   // API 폼
@@ -637,65 +606,56 @@ updateEditSettingPlaceholder();
   }
 
   // 캐릭터 프롬프트 생성 
-function createCharacterPrompt(action, additionalContext = '') {
+  function createCharacterPrompt(action, additionalContext = '') {
     if (!currentCharacter) return "";
     
     let prompt = `당신은 이제부터 '${currentCharacter.name}'이라는 캐릭터가 되어 응답해주세요. 다음 캐릭터 정보를 바탕으로 성격과 말투를 완벽히 재현해 주세요.\n\n`;
     
-    // 캐릭터 설정 추가
-    if (currentCharacter.setting) {
-        prompt += `캐릭터 설정: ${currentCharacter.setting}\n`;
-    }
-    
     // 캐릭터 기본 정보 추가
     if (currentCharacter.type === 'existing') {
-        prompt += `캐릭터 유형: 기존 작품의 캐릭터\n`;
+      prompt += `캐릭터 유형: 기존 작품의 캐릭터\n`;
     } else {
-        prompt += `캐릭터 유형: 오리지널 캐릭터\n`;
+      prompt += `캐릭터 유형: 오리지널 캐릭터\n`;
     }
     
     if (currentCharacter.genre) {
-        prompt += `장르: ${currentCharacter.genre}\n`;
+      prompt += `장르: ${currentCharacter.genre}\n`;
     }
-    
     if (currentCharacter.tone) {
-        prompt += `말투: ${currentCharacter.tone}\n`;
+      prompt += `말투: ${currentCharacter.tone}\n`;
     }
-    
     if (currentCharacter.lore) {
-        prompt += `세계관: ${currentCharacter.lore}\n`;
+      prompt += `세계관: ${currentCharacter.lore}\n`;
     }
-    
     if (currentCharacter.personality) {
-        prompt += `성격: ${currentCharacter.personality}\n`;
+      prompt += `성격: ${currentCharacter.personality}\n`;
     }
-    
     if (currentCharacter.speechStyle) {
-        prompt += `말투 특징: ${currentCharacter.speechStyle}\n`;
+      prompt += `말투 특징: ${currentCharacter.speechStyle}\n`;
     }
     
     // 현재 캐릭터 상태 정보 추가
     prompt += `\n현재 캐릭터 상태:
-    - 호감도: ${stats.affection}/100 (${stats.affection < 30 ? '매우 낮음' : stats.affection < 60 ? '보통' : '높음'})
-    - 허기: ${stats.hunger}/100 (${stats.hunger < 30 ? '매우 배고픔' : stats.hunger < 60 ? '약간 배고픔' : '배부름'})
-    - 행복도: ${stats.happiness}/100 (${stats.happiness < 30 ? '우울함' : stats.happiness < 60 ? '보통' : '행복함'})\n`;
-    
+- 호감도: ${stats.affection}/100 (${stats.affection < 30 ? '매우 낮음' : stats.affection < 60 ? '보통' : '높음'})
+- 허기: ${stats.hunger}/100 (${stats.hunger < 30 ? '매우 배고픔' : stats.hunger < 60 ? '약간 배고픔' : '배부름'})
+- 행복도: ${stats.happiness}/100 (${stats.happiness < 30 ? '우울함' : stats.happiness < 60 ? '보통' : '행복함'})\n`;
+
     // 상황별 추가 컨텍스트 제공
     prompt += `\n현재 상황: 사용자가 ${action}을(를) 했습니다. ${additionalContext}\n`;
     
     // 응답 요청 사항
     prompt += `\n${currentCharacter.name}의 반응을 다음 지침에 맞게 생성해주세요:
-    1. 캐릭터의 성격, 말투, 현재 상태를 정확히 반영할 것
-    2. 매번 다른 느낌의 대사를 생성할 것 (문장 구조와 어투를 다양하게 변화시킬 것)
-    3. 상황과 감정을 생생하게 표현할 것
-    4. 정형화된 문장이나 패턴을 반복하지 말 것
-    5. 현재 상태(호감도, 허기, 행복도)에 적합한 감정 상태를 반영할 것
-    6. 한 문장에서 세 문장 사이로 간결하게 응답할 것
-    
-    캐릭터의 대사만 작성하고, 다른 설명은 포함하지 마세요.`;
+1. 캐릭터의 성격, 말투, 현재 상태를 정확히 반영할 것
+2. 매번 다른 느낌의 대사를 생성할 것 (문장 구조와 어투를 다양하게 변화시킬 것)
+3. 상황과 감정을 생생하게 표현할 것
+4. 정형화된 문장이나 패턴을 반복하지 말 것
+5. 현재 상태(호감도, 허기, 행복도)에 적합한 감정 상태를 반영할 것
+6. 한 문장에서 세 문장 사이로 간결하게 응답할 것
+
+캐릭터의 대사만 작성하고, 다른 설명은 포함하지 마세요.`;
     
     return prompt;
-}
+  }
 
   // Gemini API 호출 함수
   async function callGeminiAPI(prompt) {
@@ -1251,12 +1211,12 @@ ${currentCharacter.lore ? '세계관: ' + currentCharacter.lore : ''}
   });
 
   // 수정할 캐릭터 선택 시 폼 채우기
-editCharacterSelect.addEventListener('change', function() {
+  editCharacterSelect.addEventListener('change', function() {
     const selectedIndex = this.value;
     
     if (selectedIndex === "") {
-        editCharacterForm.style.display = 'none';
-        return;
+      editCharacterForm.style.display = 'none';
+      return;
     }
     
     const selectedCharacter = characters[selectedIndex];
@@ -1264,17 +1224,11 @@ editCharacterSelect.addEventListener('change', function() {
     editCharacterNameInput.value = selectedCharacter.name;
     currentCharacterImg.src = selectedCharacter.image;
     
-    // 캐릭터 설정 필드 값도 설정
-    editCharacterSettingInput.value = selectedCharacter.setting || '';
-    
     if (selectedCharacter.type === 'existing') {
-        editCharacterTypeExisting.checked = true;
+      editCharacterTypeExisting.checked = true;
     } else {
-        editCharacterTypeOriginal.checked = true;
+      editCharacterTypeOriginal.checked = true;
     }
-    
-    // 플레이스홀더 업데이트
-    updateEditSettingPlaceholder();
     
     editCharacterGenreInput.value = selectedCharacter.genre || '';
     editCharacterToneInput.value = selectedCharacter.tone || '';
@@ -1283,69 +1237,56 @@ editCharacterSelect.addEventListener('change', function() {
     editCharacterSpeechStyleInput.value = selectedCharacter.speechStyle || '';
     
     editCharacterForm.style.display = 'block';
-});
-
+  });
 
   // 캐릭터 저장
   saveCharacterBtn.addEventListener('click', () => {
     const name = characterNameInput.value.trim();
-    const setting = characterSettingInput.value.trim();
     const fileInput = characterImgInput;
     
     if (name === '' || !fileInput.files || fileInput.files.length === 0) {
-        alert('캐릭터 이름과 이미지를 모두 입력해주세요.');
-        return;
-    }
-    
-    if (setting === '') {
-        alert('캐릭터 설정(필수)을 입력해주세요.');
-        return;
+      alert('캐릭터 이름과 이미지를 모두 입력해주세요.');
+      return;
     }
     
     const file = fileInput.files[0];
     const reader = new FileReader();
     
     reader.onload = function(e) {
-        const newCharacter = {
-            name: name,
-            image: e.target.result,
-            setting: setting, // 캐릭터 설정 저장
-            type: characterTypeExisting.checked ? 'existing' : 'original',
-            genre: characterGenreInput.value.trim(),
-            tone: characterToneInput.value.trim(),
-            lore: characterLoreInput.value.trim(),
-            personality: characterPersonalityInput.value.trim(),
-            speechStyle: characterSpeechStyleInput.value.trim(),
-            customDialog: '',
-            customGift: ''
-        };
-        
-        characters.push(newCharacter);
-        saveToLocalStorage();
-        renderSavedCharacters();
-        populateEditCharacterSelect();
-        populateDeleteCharacterSelect();
-        
-        // 폼 초기화
-        characterNameInput.value = '';
-        fileInput.value = '';
-        characterSettingInput.value = ''; // 캐릭터 설정 초기화
-        characterGenreInput.value = '';
-        characterToneInput.value = '';
-        characterLoreInput.value = '';
-        characterPersonalityInput.value = '';
-        characterSpeechStyleInput.value = '';
-        
-        // 저장 알림 표시
-        showNotification('캐릭터가 저장되었습니다.');
-        
-        // 새 캐릭터를 현재 캐릭터로 설정
-        currentCharacter = newCharacter;
-        displayCurrentCharacter();
+      const newCharacter = {
+        name: name,
+        image: e.target.result,
+        type: characterTypeExisting.checked ? 'existing' : 'original',
+        genre: characterGenreInput.value.trim(),
+        tone: characterToneInput.value.trim(),
+        lore: characterLoreInput.value.trim(),
+        personality: characterPersonalityInput.value.trim(),
+        speechStyle: characterSpeechStyleInput.value.trim(),
+        customDialog: '',
+        customGift: ''
+      };
+      
+      characters.push(newCharacter);
+      saveToLocalStorage();
+      renderSavedCharacters();
+      populateEditCharacterSelect();
+      
+      // 폼 초기화
+      characterNameInput.value = '';
+      fileInput.value = '';
+      characterGenreInput.value = '';
+      characterToneInput.value = '';
+      characterLoreInput.value = '';
+      characterPersonalityInput.value = '';
+      characterSpeechStyleInput.value = '';
+      
+      // 새 캐릭터를 현재 캐릭터로 설정
+      currentCharacter = newCharacter;
+      displayCurrentCharacter();
     };
     
     reader.readAsDataURL(file);
-});
+  });
 
   // 캐릭터 수정
   updateCharacterBtn.addEventListener('click', () => {
