@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
     happiness: 50
   };
   
-  // 기본 모델을 'gemini-2.0-pro-exp-02-05'로 설정하고 로컬 스토리지에서 불러오기
-  let selectedModel = localStorage.getItem('selectedModel') || 'gemini-2.0-pro-exp-02-05';
+  // 기본 모델을 'gemini-2.0-flash'로 설정하고 로컬 스토리지에서 불러오기
+  let selectedModel = localStorage.getItem('selectedModel') || 'gemini-2.0-flash';
   
   let currentCharacter = null;
   let characters = [];
@@ -15,9 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
   let apiConnected = false;
   let daysCount = 0;
   let characterStats = {}; // 캐릭터별 스탯을 저장하는 객체
-  
-  // 대화 로그 저장 배열 (최대 10개)
-  let dialogLogs = JSON.parse(localStorage.getItem('dialogLogs')) || [];
   
   // DOM 요소
   const characterContainer = document.getElementById('character-container');
@@ -51,7 +48,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const apiConnectionBtn = document.getElementById('api-connection-btn');
   const profileBtn = document.getElementById('profile-btn');
   const shareBtn = document.getElementById('share-btn');
-  const dialogLogsBtn = document.getElementById('dialog-logs-btn'); // 새로 추가
 
   // 모달
   const characterModal = document.getElementById('character-modal');
@@ -60,14 +56,10 @@ document.addEventListener('DOMContentLoaded', function() {
   const profileModal = document.getElementById('profile-modal');
   const shareModal = document.getElementById('share-modal');
   const editCharacterModal = document.getElementById('edit-character-modal');
-  const dialogLogsModal = document.getElementById('dialog-logs-modal'); // 새로 추가
   const nightOverlay = document.getElementById('night-overlay');
 
   // 모달 닫기 버튼
   const closeButtons = document.querySelectorAll('.close');
-
-  // 대화 로그 관련 요소
-  const dialogLogsList = document.getElementById('dialog-logs-list');
   
   // 캐릭터 업로드 폼
   const characterNameInput = document.getElementById('character-name');
@@ -211,9 +203,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 저장된 모델 설정 불러오기
     loadSavedModelSelection();
-    
-    // 대화 로그 불러오기
-    renderDialogLogs();
   }
 
   // 로컬 스토리지에 데이터 저장
@@ -222,7 +211,6 @@ document.addEventListener('DOMContentLoaded', function() {
     localStorage.setItem('tamagotchiCharacterStats', JSON.stringify(characterStats));
     localStorage.setItem('tamagotchiStats', JSON.stringify(stats));
     localStorage.setItem('tamagotchiDaysCount', daysCount.toString());
-    localStorage.setItem('dialogLogs', JSON.stringify(dialogLogs));
     
     if (currentCharacter) {
       localStorage.setItem('currentCharacter', JSON.stringify(currentCharacter));
@@ -231,95 +219,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (apiKey) {
       localStorage.setItem('geminiApiKey', apiKey);
     }
-  }
-
-  // 대화 로그에 추가
-  function addToDialogLogs(dialog, action) {
-    if (!dialog || dialog.trim() === '') return;
-    
-    // 최대 10개만 저장
-    if (dialogLogs.length >= 10) {
-      dialogLogs.pop(); // 가장 오래된 로그 제거
-    }
-    
-    // 새 로그 추가 (맨 앞에)
-    dialogLogs.unshift({
-      text: dialog,
-      action: action,
-      timestamp: new Date().toLocaleString(),
-      character: currentCharacter ? currentCharacter.name : '캐릭터'
-    });
-    
-    // 로컬 스토리지에 저장
-    saveToLocalStorage();
-    
-    // 대화 로그 목록 갱신
-    renderDialogLogs();
-  }
-
-  // 대화 로그 목록 렌더링
-  function renderDialogLogs() {
-    if (!dialogLogsList) return;
-    
-    dialogLogsList.innerHTML = '';
-    
-    if (dialogLogs.length === 0) {
-      const emptyItem = document.createElement('div');
-      emptyItem.className = 'empty-logs';
-      emptyItem.textContent = '저장된 대화 로그가 없습니다.';
-      dialogLogsList.appendChild(emptyItem);
-      return;
-    }
-    
-    dialogLogs.forEach((log, index) => {
-      const logItem = document.createElement('div');
-      logItem.className = 'dialog-log-item';
-      
-      const logText = document.createElement('div');
-      logText.className = 'dialog-log-text';
-      logText.textContent = log.text;
-      
-      const logInfo = document.createElement('div');
-      logInfo.className = 'dialog-log-info';
-      logInfo.textContent = `${log.character} - ${log.action} [${log.timestamp}]`;
-      
-      const logActions = document.createElement('div');
-      logActions.className = 'dialog-log-actions';
-      
-      const copyBtn = document.createElement('button');
-      copyBtn.className = 'log-action-btn';
-      copyBtn.textContent = '복사';
-      copyBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText(log.text)
-          .then(() => {
-            copyBtn.textContent = '복사됨!';
-            setTimeout(() => {
-              copyBtn.textContent = '복사';
-            }, 2000);
-          })
-          .catch(err => {
-            console.error('클립보드 복사 실패:', err);
-          });
-      });
-      
-      const deleteBtn = document.createElement('button');
-      deleteBtn.className = 'log-action-btn delete-btn';
-      deleteBtn.textContent = '삭제';
-      deleteBtn.addEventListener('click', () => {
-        dialogLogs.splice(index, 1);
-        saveToLocalStorage();
-        renderDialogLogs();
-      });
-      
-      logActions.appendChild(copyBtn);
-      logActions.appendChild(deleteBtn);
-      
-      logItem.appendChild(logText);
-      logItem.appendChild(logInfo);
-      logItem.appendChild(logActions);
-      
-      dialogLogsList.appendChild(logItem);
-    });
   }
 
   // 스탯 표시 업데이트
@@ -452,7 +351,6 @@ document.addEventListener('DOMContentLoaded', function() {
     callGeminiAPI(prompt)
       .then(response => {
         showSpeechBubble(response);
-        addToDialogLogs(response, "인사"); // 대화 로그에 저장
       })
       .catch(error => {
         console.error("AI 인사말 생성 오류:", error);
@@ -601,7 +499,7 @@ document.addEventListener('DOMContentLoaded', function() {
     return gifts[Math.floor(Math.random() * gifts.length)];
   }
 
-  // 캐릭터 프롬프트 생성 (개선된 버전)
+  // 캐릭터 프롬프트 생성
   function createCharacterPrompt(action, additionalContext = '') {
     if (!currentCharacter) return "";
     
@@ -640,15 +538,7 @@ document.addEventListener('DOMContentLoaded', function() {
     prompt += `\n현재 상황: 사용자가 ${action}을(를) 했습니다. ${additionalContext}\n`;
     
     // 응답 요청 사항
-    prompt += `\n${currentCharacter.name}의 반응을 다음 지침에 맞게 생성해주세요:
-1. 캐릭터의 성격, 말투, 현재 상태를 정확히 반영할 것
-2. 매번 다른 느낌의 대사를 생성할 것 (문장 구조와 어투를 다양하게 변화시킬 것)
-3. 상황과 감정을 생생하게 표현할 것
-4. 정형화된 문장이나 패턴을 반복하지 말 것
-5. 현재 상태(호감도, 허기, 행복도)에 적합한 감정 상태를 반영할 것
-6. 한 문장에서 세 문장 사이로 간결하게 응답할 것
-
-캐릭터의 대사만 작성하고, 다른 설명은 포함하지 마세요.`;
+    prompt += `\n${currentCharacter.name}의 반응을 생성해주세요. 캐릭터의 대사만 작성하고, 다른 설명은 포함하지 마세요. 줄바꿈은 사용하지 말고 한 문단으로 작성해주세요.`;
     
     return prompt;
   }
@@ -674,8 +564,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }]
           }],
           generationConfig: {
-            temperature: 0.9, // 답변 다양성 증가
-            maxOutputTokens: 150 // 약간 더 긴 답변 허용
+            temperature: 0.7,
+            maxOutputTokens: 100
           }
         })
       });
@@ -688,7 +578,10 @@ document.addEventListener('DOMContentLoaded', function() {
       const data = await response.json();
       
       if (data.candidates && data.candidates[0].content) {
-        return data.candidates[0].content.parts[0].text;
+        // 줄바꿈 문자를 공백으로 변경하여 반환
+        let responseText = data.candidates[0].content.parts[0].text;
+        responseText = responseText.replace(/\n/g, ' ');
+        return responseText;
       } else {
         throw new Error('API 응답 형식이 올바르지 않습니다');
       }
@@ -802,7 +695,7 @@ ${currentCharacter.lore ? '세계관: ' + currentCharacter.lore : ''}
     }, 1500);
   }
 
-  // AI 기반 반응 생성 (개선된 버전)
+  // AI 기반 반응 생성
   async function generateAIResponse(action, additionalContext = '') {
     if (!apiConnected || !currentCharacter) return null;
     
@@ -878,7 +771,6 @@ ${currentCharacter.lore ? '세계관: ' + currentCharacter.lore : ''}
       const aiResponse = await generateAIResponse("click");
       if (aiResponse) {
         showSpeechBubble(aiResponse);
-        addToDialogLogs(aiResponse, "클릭"); // 대화 로그에 저장
         return;
       }
     }
@@ -886,7 +778,6 @@ ${currentCharacter.lore ? '세계관: ' + currentCharacter.lore : ''}
     // API 연결 실패 시 기본 응답 사용
     const defaultResponse = getRandomDialog();
     showSpeechBubble(defaultResponse);
-    addToDialogLogs(defaultResponse, "클릭"); // 대화 로그에 저장
   });
 
   // 액션 버튼 이벤트 - 수정된 부분
@@ -906,15 +797,23 @@ ${currentCharacter.lore ? '세계관: ' + currentCharacter.lore : ''}
       const aiResponse = await generateAIResponse("feed");
       if (aiResponse) {
         showSpeechBubble(aiResponse);
-        addToDialogLogs(aiResponse, "밥주기"); // 대화 로그에 저장
         return;
       }
     }
     
     // API 연결 실패 시 기본 응답 사용
-    const response = '맛있어요! 감사합니다!';
+    const hungerLevel = stats.hunger;
+    let response;
+    
+    if (hungerLevel < 30) {
+      response = '와, 정말 배고팠어요! 감사합니다!';
+    } else if (hungerLevel > 80) {
+      response = '으, 배가 너무 불러요... 그래도 고마워요.';
+    } else {
+      response = '맛있어요! 감사합니다!';
+    }
+    
     showSpeechBubble(response);
-    addToDialogLogs(response, "밥주기"); // 대화 로그에 저장
   });
 
   playButton.addEventListener('click', async () => {
@@ -934,7 +833,6 @@ ${currentCharacter.lore ? '세계관: ' + currentCharacter.lore : ''}
       const aiResponse = await generateAIResponse("play");
       if (aiResponse) {
         showSpeechBubble(aiResponse);
-        addToDialogLogs(aiResponse, "놀아주기"); // 대화 로그에 저장
         return;
       }
     }
@@ -942,7 +840,6 @@ ${currentCharacter.lore ? '세계관: ' + currentCharacter.lore : ''}
     // API 연결 실패 시 기본 응답 사용
     const defaultResponse = getRandomDialog();
     showSpeechBubble(defaultResponse);
-    addToDialogLogs(defaultResponse, "놀아주기"); // 대화 로그에 저장
   });
 
   giftButton.addEventListener('click', async () => {
@@ -964,7 +861,6 @@ ${currentCharacter.lore ? '세계관: ' + currentCharacter.lore : ''}
       const aiResponse = await generateAIResponse("gift");
       if (aiResponse) {
         showSpeechBubble(aiResponse);
-        addToDialogLogs(aiResponse, "선물주기 (" + gift + ")"); // 대화 로그에 저장
         return;
       }
     }
@@ -972,7 +868,6 @@ ${currentCharacter.lore ? '세계관: ' + currentCharacter.lore : ''}
     // API 연결 실패 시 기본 응답 사용
     const response = `${gift}! 정말 좋아해요!`;
     showSpeechBubble(response);
-    addToDialogLogs(response, "선물주기 (" + gift + ")"); // 대화 로그에 저장
   });
 
   sleepButton.addEventListener('click', async () => {
@@ -1000,11 +895,9 @@ ${currentCharacter.lore ? '세계관: ' + currentCharacter.lore : ''}
         
         if (aiResponse) {
           showSpeechBubble(aiResponse);
-          addToDialogLogs(aiResponse, "잠자기"); // 대화 로그에 저장
         } else {
           const response = '배고파요... 밥 주세요ㅠㅠ';
           showSpeechBubble(response);
-          addToDialogLogs(response, "잠자기"); // 대화 로그에 저장
         }
       } else {
         // 배부르면 행복도와 호감도 증가
@@ -1013,11 +906,9 @@ ${currentCharacter.lore ? '세계관: ' + currentCharacter.lore : ''}
         
         if (aiResponse) {
           showSpeechBubble(aiResponse);
-          addToDialogLogs(aiResponse, "잠자기"); // 대화 로그에 저장
         } else {
           const response = '잘 잤어요! 기분이 좋아요!';
           showSpeechBubble(response);
-          addToDialogLogs(response, "잠자기"); // 대화 로그에 저장
         }
       }
       
@@ -1049,7 +940,6 @@ ${currentCharacter.lore ? '세계관: ' + currentCharacter.lore : ''}
       const aiResponse = await generateAIResponse("customGift");
       if (aiResponse) {
         showSpeechBubble(aiResponse);
-        addToDialogLogs(aiResponse, "선물주기 (" + customGift + ")"); // 대화 로그에 저장
         return;
       }
     }
@@ -1057,7 +947,6 @@ ${currentCharacter.lore ? '세계관: ' + currentCharacter.lore : ''}
     // API 연결 실패 시 기본 응답 사용
     const response = `${customGift}! 정말 좋아해요!`;
     showSpeechBubble(response);
-    addToDialogLogs(response, "선물주기 (" + customGift + ")"); // 대화 로그에 저장
     
     // 입력 필드 초기화
     customGiftInput.value = '';
@@ -1098,11 +987,6 @@ ${currentCharacter.lore ? '세계관: ' + currentCharacter.lore : ''}
   
   shareBtn.onclick = function() {
     shareModal.style.display = 'block';
-  };
-  
-  dialogLogsBtn.onclick = function() {
-    dialogLogsModal.style.display = 'block';
-    renderDialogLogs(); // 최신 로그 표시
   };
   
   editCharacterBtn.onclick = function() {
@@ -1457,9 +1341,6 @@ ${currentCharacter.lore ? '세계관: ' + currentCharacter.lore : ''}
     }
     if (event.target === editCharacterModal) {
       editCharacterModal.style.display = 'none';
-    }
-    if (event.target === dialogLogsModal) {
-      dialogLogsModal.style.display = 'none';
     }
   };
 
