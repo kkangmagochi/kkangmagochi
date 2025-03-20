@@ -87,6 +87,7 @@
             <button id="api-connection-btn" class="control-button">API 연결</button>
             <button id="profile-btn" class="control-button">프로필 사진</button>
             <button id="share-btn" class="control-button">이미지 공유</button>
+            <button id="dialog-logs-btn" class="control-button">대화 로그</button>
         </div>
     </div>
 
@@ -305,6 +306,22 @@
 
     <!-- 밤 효과용 오버레이 -->
     <div id="night-overlay" class="night-overlay"></div>
+
+    <!-- 대화 로그 모달 -->
+    <div id="dialog-logs-modal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>대화 로그</h2>
+      <span class="close">&times;</span>
+    </div>
+    <div class="modal-body">
+      <p class="help-text">마음에 드는 대화는 '복사' 버튼을 클릭해 클립보드에 복사하세요. 계속 보고 싶은 대사는 설정의 '맞춤 대화'에 추가해주세요.</p>
+      <div id="dialog-logs-list" class="dialog-logs-list">
+        <!-- 여기에 로그 항목이 동적으로 추가됩니다 -->
+      </div>
+    </div>
+  </div>
+</div>
 
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="script.js"></script>
