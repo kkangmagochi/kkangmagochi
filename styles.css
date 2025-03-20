@@ -671,3 +671,74 @@ body {
         padding: 15px;
     }
 }
+
+/* 대화 로그 관련 스타일 */
+.dialog-logs-list {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: white;
+}
+
+.dialog-log-item {
+  padding: 15px;
+  border-bottom: 1px solid var(--border-color);
+  position: relative;
+}
+
+.dialog-log-item:last-child {
+  border-bottom: none;
+}
+
+.dialog-log-text {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  font-family: 'Gaegu', cursive;
+}
+
+.dialog-log-info {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-bottom: 5px;
+}
+
+.dialog-log-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.log-action-btn {
+  padding: 5px 10px;
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 15px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.log-action-btn:hover {
+  background-color: var(--accent-color);
+}
+
+.delete-btn:hover {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.empty-logs {
+  padding: 20px;
+  text-align: center;
+  color: #6c757d;
+}
+
+.help-text {
+  font-size: 0.9rem;
+  color: #6c757d;
+  padding: 8px;
+  background-color: #fff3cd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
