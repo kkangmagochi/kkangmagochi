@@ -767,6 +767,18 @@ body {
     justify-content: start;
 }
 
+.saved-characters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.character-actions {
+    display: flex;
+    gap: 10px;
+}
+
 /* 접힘 메뉴 스타일 */
 .collapsible-section {
     margin-bottom: 15px;
@@ -803,5 +815,34 @@ body {
 .collapsible-content {
     max-height: 0;
     overflow: hidden;
-    transition: max
+    transition: max-height 0.3s ease-out;
 }
+
+.collapsible-section input[type="checkbox"]:checked ~ .collapsible-content {
+    max-height: 1000px; /* 충분히 큰 값으로 설정 */
+}
+
+/* 삭제 버튼 스타일 */
+.delete-btn {
+    background-color: #ffdddd;
+    color: #990000;
+}
+
+.delete-btn:hover {
+    background-color: #ff9999;
+}
+
+/* 알림 메시지 스타일 */
+.notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(144, 238, 144, 0.9);
+    color: #006400;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+}
+
